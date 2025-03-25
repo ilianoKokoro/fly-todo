@@ -17,6 +17,11 @@ class UserRepository {
         return user;
     }
 
+    retrieveOneByName(name) {
+        const user = User.findOne({ name: name });
+        return user;
+    }
+
     retrieveAll() {
         const user = User.find({});
         return user;
@@ -82,7 +87,7 @@ class UserRepository {
 
     async validateRefreshToken(uuid, headerName) {
         try {
-            const user = await User.findOne({ uuid: uuid });
+            const user = await User.findOne({ name: uuid });
 
             if (!user) {
                 throw HttpErrors.NotFound("User not found.");

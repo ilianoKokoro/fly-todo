@@ -1,19 +1,22 @@
 meta {
-  name: Get user
+  name: Create one
   type: http
-  seq: 3
+  seq: 1
 }
 
-get {
-  url: http://localhost:7187/users/19c1e0d9-4117-44a5-b0ae-63521153cc8d
-  body: none
+post {
+  url: http://localhost:7187/tasks
+  body: json
   auth: bearer
-}
-
-headers {
-  : 
 }
 
 auth:bearer {
   token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoibmFtZVVzZXIiLCJpYXQiOjE3NDI5MzIwNjksImV4cCI6MTc0MjkzMzg2OSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo3MTg3In0.bGGzrsdwYpqYIoHGStO3jfCd_jxJgJsk8jQiLgigIUg
+}
+
+body:json {
+   {
+     "name":"test",
+     "isCompleted":false
+   }
 }

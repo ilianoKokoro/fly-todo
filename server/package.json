@@ -1,11 +1,24 @@
 {
-  "name": "fly-todo-srv",
-  "version": "1.0.0",
-  "description": "Server for the TODO app",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Ilian Delagrange",
-  "license": "ISC"
+    "name": "fly-todo-srv",
+    "version": "1.0.0",
+    "description": "Server for the TODO app",
+    "main": "server.js",
+    "scripts": {
+        "start": "node server.js",
+        "dev": "node --watch server.js"
+    },
+    "type": "module",
+    "author": "Ilian Delagrange",
+    "license": "ISC",
+    "dependencies": {
+        "argon2": "^0.41.1",
+        "chalk": "^5.4.1",
+        "cors": "^2.8.5",
+        "express": "^4.21.2",
+        "express-jwt": "^8.5.1",
+        "express-validator": "^7.2.1",
+        "http-errors": "^2.0.0",
+        "jsonwebtoken": "^9.0.2",
+        "mongoose": "^8.13.0"
+    }
 }

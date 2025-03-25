@@ -1,0 +1,138 @@
+import HttpErrors from "http-errors";
+import argon from "argon2";
+import jwt from "jsonwebtoken";
+
+import User from "../models/explorer.user.js";
+import AccessTokenBlacklist from "../models/accessTokenBlacklist.model.js";
+import RefreshTokenBlacklist from "../models/refreshTokenBlacklist.model.js";
+
+class UserRepository {
+    retrieveOne(uuid) {
+        const user = User.findOne({ uuid: uuid });
+        return user;
+    }
+
+    retrieveOneWithFields(uuid, fields) {
+        const user = User.findOne({ uuid: uuid }, fields);
+        return user;
+    }
+
+    retrieveAll() {
+        const user = User.find({});
+        return user;
+    }
+
+    async login(name, password) {
+        try {
+            const user = await User.findOne({ name: name });
+
+            if (!user || !(await this.validatePassword(password, user))) {
+                throw HttpErrors.Unauthorized(
+                    "Unauthorized access. Invalid username or password."
+                );
+            }
+
+            return { user: user };
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    async validatePassword(password, user) {
+        return await argon.verify(user.passwordHash, password);
+    }
+
+    async create(user) {
+        try {
+            user.passwordHash = await argon.hash(user.password);
+            delete user.password;
+            this.loadElements(user);
+            const newUser = await User.create(user);
+
+            return newUser;
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    generateJWT(user) {
+        try {
+            const accessToken = jwt.sign(
+                { name: explorer.name },
+                process.env.JWT_TOKEN_SECRET,
+                {
+                    expiresIn: process.env.JWT_TOKEN_LIFE,
+                    issuer: process.env.BASE_URL,
+                }
+            );
+
+            const refreshToken = jwt.sign(
+                { uuid: explorer.uuid },
+                process.env.JWT_REFRESH_SECRET,
+                {
+                    expiresIn: process.env.JWT_REFRESH_LIFE,
+                    issuer: process.env.BASE_URL,
+                }
+            );
+
+            return { accessToken, refreshToken };
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    async validateRefreshToken(uuid, headerName) {
+        try {
+            const user = await User.findOne({ uuid: uuid });
+
+            if (!user) {
+                throw HttpErrors.NotFound("User not found.");
+            }
+
+            return {
+                validate: user.name === headerName,
+                user: user,
+            };
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    async logout(accessToken, refreshToken) {
+        try {
+            await AccessTokenBlacklist.create({ token: accessToken });
+            await RefreshTokenBlacklist.create({ token: refreshToken });
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    async blacklistAccessToken(accessToken) {
+        try {
+            await AccessTokenBlacklist.create({ token: accessToken });
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    async blacklistRefreshToken(refreshToken) {
+        try {
+            await RefreshTokenBlacklist.create({ token: refreshToken });
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    transform(explorer) {
+        explorer.href = `${process.env.BASE_URL}/users/${explorer.uuid}`;
+
+        delete explorer._id;
+        delete explorer.uuid;
+        delete explorer.passwordHash;
+        delete explorer.__v;
+
+        return explorer;
+    }
+}
+
+export default new UserRepository();

@@ -4,8 +4,8 @@
     "description": "Server for the TODO app",
     "main": "server.js",
     "scripts": {
-        "start": "node server.js",
-        "dev": "node --watch server.js"
+        "start": "node --env-file=.env server.js",
+        "dev": "node --env-file=.env --watch server.js"
     },
     "type": "module",
     "author": "Ilian Delagrange",

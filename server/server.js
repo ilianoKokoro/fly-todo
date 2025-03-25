@@ -8,6 +8,5 @@ app.listen(env.PORT, (err) => {
         process.exit(1);
     }
 
-    console.log(`Loading environment for ${env.ENV}`);
     console.log(chalk.blue(`Server listening on port: ${env.PORT}`));
 });

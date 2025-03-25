@@ -1,15 +1,8 @@
-import { isObjectIdOrHexString } from "mongoose";
 import Tasks from "../models/task.model.js";
-import userRepository from "./user.repository.js";
 class TasksRepository {
     retrieveOne(uuid) {
-        const user = Tasks.findOne({ uuid: uuid });
-        return user;
-    }
-
-    retrieveOneByUser(uuid) {
-        const user = Tasks.findOne({ user: uuid });
-        return user;
+        const task = Tasks.findOne({ uuid: uuid });
+        return task;
     }
 
     async create(task) {
@@ -20,12 +13,30 @@ class TasksRepository {
         }
     }
 
-    transform(task) {
-        task.href = `${process.env.BASE_URL}/tasks/${task.uuid}`;
+    async delete(uuid) {
+        try {
+            await Tasks.deleteOne({ uuid: uuid });
+        } catch (err) {
+            throw err;
+        }
+    }
 
-        //task.user = userRepository.transform(task.user);
+    async edit(body, task_uuid) {
+        const update = { name: body.name, isCompleted: body.isCompleted };
+
+        return await Tasks.findOneAndUpdate(
+            {
+                uuid: task_uuid,
+            },
+            { $set: update },
+            { new: true }
+        );
+    }
+
+    transform(task, user_uuid) {
+        task.href = `${process.env.BASE_URL}/users/${user_uuid}/tasks/${task.uuid}`;
+
         delete task.user;
-
         delete task._id;
         delete task.uuid;
         delete task.__v;

@@ -1,22 +1,15 @@
 meta {
-  name: Create one
+  name: Delete one
   type: http
-  seq: 1
+  seq: 2
 }
 
-post {
-  url: http://localhost:7187/users/19c1e0d9-4117-44a5-b0ae-63521153cc8d/tasks
-  body: json
+delete {
+  url: http://localhost:7187/users/19c1e0d9-4117-44a5-b0ae-63521153cc8d/tasks/b0ed53e4-fb1e-48b8-a622-1f65c5a32d2b
+  body: none
   auth: bearer
 }
 
 auth:bearer {
   token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoibmFtZVVzZXIiLCJpYXQiOjE3NDI5NDI2NzQsImV4cCI6MTc0Mjk0NDQ3NCwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo3MTg3In0.E3YEsYWxyBHLmgRcC8yEm4z3XjQXESE16rzaPn4zgtQ
-}
-
-body:json {
-   {
-     "name":"test",
-     "isCompleted":false
-   }
 }

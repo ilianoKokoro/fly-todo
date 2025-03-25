@@ -133,7 +133,7 @@ class UserRepository {
 
         if (user.tasks) {
             user.tasks.map((t) => {
-                t = tasksRepository.transform(t);
+                t = tasksRepository.transform(t, user.uuid);
                 return t;
             });
         }

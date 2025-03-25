@@ -18,8 +18,8 @@ class TaskRouter {
             req.body.user = user;
 
             let task = await tasksRepository.create(req.body, userName);
-
             task = task.toObject({ getters: false, virtuals: false });
+            task = tasksRepository.transform(task);
 
             res.status(201).json(task);
         } catch (err) {

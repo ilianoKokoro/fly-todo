@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
 import AccessTokenBlacklist from "../models/accessTokenBlacklist.model.js";
 import RefreshTokenBlacklist from "../models/refreshTokenBlacklist.model.js";
+import tasksRepository from "./tasks.repository.js";
 
 class UserRepository {
     retrieveOne(uuid) {
@@ -129,6 +130,13 @@ class UserRepository {
 
     transform(user) {
         user.href = `${process.env.BASE_URL}/users/${user.uuid}`;
+
+        if (user.tasks) {
+            user.tasks.map((t) => {
+                t = tasksRepository.transform(t);
+                return t;
+            });
+        }
 
         delete user._id;
         delete user.uuid;

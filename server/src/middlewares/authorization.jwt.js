@@ -2,7 +2,7 @@ import HttpErrors from "http-errors";
 import { expressjwt as expressJWT } from "express-jwt";
 import AccessTokenBlacklist from "../models/accessTokenBlacklist.model.js";
 import RefreshTokenBlacklist from "../models/refreshTokenBlacklist.model.js";
-import explorerRepository from "../repositories/explorer.repository.js";
+import userRepository from "../repositories/user.repository.js";
 
 const guardAuthorizationJWT = expressJWT({
     secret: process.env.JWT_TOKEN_SECRET,
@@ -32,19 +32,17 @@ const guardRefreshJWT = expressJWT({
 
 const guardAccess = async (req, res, next) => {
     try {
-        if (!req.params.explorer_uuid) {
-            throw HttpErrors.BadRequest("Explorer UUID is required.");
+        if (!req.params.user_uuid) {
+            throw HttpErrors.BadRequest("User UUID is required.");
         }
 
-        const explorer = await explorerRepository.retrieveOne(
-            req.params.explorer_uuid
-        );
+        const user = await userRepository.retrieveOne(req.params.user_uuid);
 
-        if (!explorer) {
-            throw HttpErrors.NotFound("Explorer not found.");
+        if (!user) {
+            throw HttpErrors.NotFound("User not found.");
         }
 
-        if (req.auth.name !== explorer.name) {
+        if (req.auth.name !== user.name) {
             throw HttpErrors.Forbidden(
                 "You are not authorized to access this resource."
             );

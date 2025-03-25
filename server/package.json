@@ -5,7 +5,7 @@
     "main": "server.js",
     "scripts": {
         "start": "node --env-file=.env server.js",
-        "dev": "node --env-file=.env --watch server.js"
+        "dev": "node --env-file=.dev.env --watch server.js"
     },
     "type": "module",
     "author": "Ilian Delagrange",
@@ -19,6 +19,7 @@
         "express-validator": "^7.2.1",
         "http-errors": "^2.0.0",
         "jsonwebtoken": "^9.0.2",
-        "mongoose": "^8.13.0"
+        "mongoose": "^8.13.0",
+        "uuid": "^11.1.0"
     }
 }

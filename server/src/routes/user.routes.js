@@ -1,7 +1,7 @@
 import express from "express";
 import HttpErrors from "http-errors";
 
-import explorerRepository from "../repositories/explorer.repository.js";
+import userRepository from "../repositories/user.repository.js";
 
 import {
     guardAuthorizationJWT,
@@ -9,15 +9,15 @@ import {
     guardAccess,
 } from "../middlewares/authorization.jwt.js";
 import blacklistExpiredRefreshToken from "../middlewares/blacklist.refreshToken.js";
-import explorerValidator from "../validators/explorer.validator.js";
+import userValidator from "../validators/user.validator.js";
 import validator from "../middlewares/validator.js";
 
 const router = express.Router();
 
-class ExplorerRouter {
+class UserRouter {
     constructor() {
-        router.post("/", explorerValidator.complete(), validator, this.signup);
-        router.post("/actions/login", explorerValidator.partial(), this.login);
+        router.post("/", userValidator.complete(), validator, this.signup);
+        router.post("/actions/login", userValidator.partial(), this.login);
         router.post(
             "/actions/refresh",
             blacklistExpiredRefreshToken,
@@ -25,29 +25,23 @@ class ExplorerRouter {
             this.refreshTokens
         );
         router.get(
-            "/:explorer_uuid",
+            "/:user_uuid",
             guardAuthorizationJWT,
             guardAccess,
             this.getOne
-        );
-        router.get(
-            "/:explorer_uuid/inventory",
-            guardAuthorizationJWT,
-            guardAccess,
-            this.getInventory
         );
         router.delete("/actions/logout", guardAuthorizationJWT, this.logout);
     }
 
     async signup(req, res, next) {
         try {
-            let explorer = await explorerRepository.create(req.body);
+            let user = await userRepository.create(req.body);
 
-            explorer = explorer.toObject({ getters: false, virtuals: false });
-            const tokens = explorerRepository.generateJWT(explorer, true);
-            explorer = explorerRepository.transform(explorer);
+            user = user.toObject({ getters: false, virtuals: false });
+            const tokens = userRepository.generateJWT(user, true);
+            user = userRepository.transform(user);
 
-            res.status(201).json({ explorer, tokens });
+            res.status(201).json({ user, tokens });
         } catch (err) {
             return next(err);
         }
@@ -63,17 +57,17 @@ class ExplorerRouter {
                 );
             }
 
-            const loginResult = await explorerRepository.login(name, password);
+            const loginResult = await userRepository.login(name, password);
 
-            if (loginResult.explorer) {
-                let explorer = loginResult.explorer.toObject({
+            if (loginResult.user) {
+                let user = loginResult.user.toObject({
                     getters: false,
                     virtuals: false,
                 });
-                const tokens = explorerRepository.generateJWT(explorer, true);
-                explorer = explorerRepository.transform(explorer);
+                const tokens = userRepository.generateJWT(user, true);
+                user = userRepository.transform(user);
 
-                res.status(201).json({ explorer, tokens });
+                res.status(201).json({ user, tokens });
             }
         } catch (err) {
             return next(err);
@@ -93,18 +87,18 @@ class ExplorerRouter {
                 );
             }
 
-            const validateResult =
-                await explorerRepository.validateRefreshToken(uuid, headerName);
+            const validateResult = await userRepository.validateRefreshToken(
+                uuid,
+                headerName
+            );
 
             if (!validateResult.validate) {
                 throw HttpErrors.Forbidden("Invalid refresh token.");
             }
 
-            await explorerRepository.blacklistAccessToken(oldAccessToken);
+            await userRepository.blacklistAccessToken(oldAccessToken);
 
-            const tokens = explorerRepository.generateJWT(
-                validateResult.explorer
-            );
+            const tokens = userRepository.generateJWT(validateResult.user);
 
             res.status(201).json({ tokens });
         } catch (err) {
@@ -123,23 +117,8 @@ class ExplorerRouter {
                 );
             }
 
-            await explorerRepository.logout(accessToken, refreshToken);
+            await userRepository.logout(accessToken, refreshToken);
             res.status(204).end();
-        } catch (err) {
-            return next(err);
-        }
-    }
-
-    async getInventory(req, res, next) {
-        try {
-            let explorer = await explorerRepository.retrieveOneWithFields(
-                req.params.explorer_uuid,
-                "inox essence elements uuid"
-            );
-
-            explorer = explorer.toObject({ getters: false, virtuals: false });
-            explorer = explorerRepository.transform(explorer);
-            res.status(200).json(explorer);
         } catch (err) {
             return next(err);
         }
@@ -147,19 +126,17 @@ class ExplorerRouter {
 
     async getOne(req, res, next) {
         try {
-            let explorer = await explorerRepository.retrieveOne(
-                req.params.explorer_uuid
-            );
-            explorer = explorer.toObject({ getters: false, virtuals: false });
-            explorer = explorerRepository.transform(explorer);
+            let user = await userRepository.retrieveOne(req.params.user_uuid);
+            user = user.toObject({ getters: false, virtuals: false });
+            user = userRepository.transform(user);
 
-            res.status(200).json(explorer);
+            res.status(200).json(user);
         } catch (err) {
             return next(err);
         }
     }
 }
 
-new ExplorerRouter();
+new UserRouter();
 
 export default router;

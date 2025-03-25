@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import ExplorerRepository from "../repositories/explorer.repository.js";
+import UserRepository from "../repositories/user.repository.js";
 
 const blacklistExpiredRefreshToken = async (req, res, next) => {
     const refreshToken = req.body.refreshToken;
@@ -16,9 +16,7 @@ const blacklistExpiredRefreshToken = async (req, res, next) => {
             async (err, decoded) => {
                 if (err && err.name === "TokenExpiredError") {
                     // Token is expired, blacklist it
-                    await ExplorerRepository.blacklistRefreshToken(
-                        refreshToken
-                    );
+                    await UserRepository.blacklistRefreshToken(refreshToken);
 
                     console.log(
                         "Refresh token expired and blacklisted:",

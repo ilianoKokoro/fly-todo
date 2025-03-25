@@ -2,7 +2,7 @@ import HttpErrors from "http-errors";
 import argon from "argon2";
 import jwt from "jsonwebtoken";
 
-import User from "../models/explorer.user.js";
+import User from "../models/user.model.js";
 import AccessTokenBlacklist from "../models/accessTokenBlacklist.model.js";
 import RefreshTokenBlacklist from "../models/refreshTokenBlacklist.model.js";
 
@@ -46,7 +46,6 @@ class UserRepository {
         try {
             user.passwordHash = await argon.hash(user.password);
             delete user.password;
-            this.loadElements(user);
             const newUser = await User.create(user);
 
             return newUser;
@@ -58,7 +57,7 @@ class UserRepository {
     generateJWT(user) {
         try {
             const accessToken = jwt.sign(
-                { name: explorer.name },
+                { name: user.name },
                 process.env.JWT_TOKEN_SECRET,
                 {
                     expiresIn: process.env.JWT_TOKEN_LIFE,
@@ -67,7 +66,7 @@ class UserRepository {
             );
 
             const refreshToken = jwt.sign(
-                { uuid: explorer.uuid },
+                { uuid: user.uuid },
                 process.env.JWT_REFRESH_SECRET,
                 {
                     expiresIn: process.env.JWT_REFRESH_LIFE,
@@ -123,15 +122,15 @@ class UserRepository {
         }
     }
 
-    transform(explorer) {
-        explorer.href = `${process.env.BASE_URL}/users/${explorer.uuid}`;
+    transform(user) {
+        user.href = `${process.env.BASE_URL}/users/${user.uuid}`;
 
-        delete explorer._id;
-        delete explorer.uuid;
-        delete explorer.passwordHash;
-        delete explorer.__v;
+        delete user._id;
+        delete user.uuid;
+        delete user.passwordHash;
+        delete user.__v;
 
-        return explorer;
+        return user;
     }
 }
 

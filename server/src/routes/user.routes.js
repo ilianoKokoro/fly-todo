@@ -127,7 +127,7 @@ class UserRouter {
     async getOne(req, res, next) {
         try {
             let user = await userRepository.retrieveOne(req.params.user_uuid);
-            user = user.toObject({ getters: false, virtuals: false });
+            user = user.toObject({ getters: false, virtuals: true });
             user = userRepository.transform(user);
 
             res.status(200).json(user);

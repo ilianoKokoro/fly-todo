@@ -1,0 +1,11 @@
+meta {
+  name: Logout
+  type: http
+  seq: 5
+}
+
+delete {
+  url: https://fly-todo-api.vercel.app/users/actions/logout
+  body: none
+  auth: inherit
+}

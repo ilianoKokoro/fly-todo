@@ -1,0 +1,18 @@
+meta {
+  name: User login
+  type: http
+  seq: 2
+}
+
+post {
+  url: https://fly-todo-api.vercel.app/users/actions/login
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name":"nameUser",
+    "password":"!@#$QWER1234qwer"
+  }
+}

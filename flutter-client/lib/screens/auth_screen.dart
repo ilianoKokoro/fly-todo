@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fly_todo/components/button_row.dart';
 import 'package:fly_todo/components/text_input_with_padding.dart';
+import 'package:fly_todo/repositories/auth_repository.dart';
 
 enum AuthType { logIn, signUp }
 
@@ -12,14 +13,49 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
+  bool loading = false;
   String username = "";
   String email = "";
   String password = "";
   String passwordConfirm = "";
   AuthType currentScreen = AuthType.logIn;
 
-  void executeAuthentication() {
-    if (currentScreen == AuthType.logIn) {}
+  void showError(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Error"),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void executeAuthentication() async {
+    if (loading == true) {
+      return;
+    }
+    loading = true;
+
+    if (currentScreen == AuthType.logIn) {
+      await logIn(username, password);
+    } else {
+      if (password != passwordConfirm) {
+        showError("The passwords do not match");
+        return;
+      }
+      await signUp(username, email, password);
+    }
+    loading = false;
   }
 
   @override
@@ -115,6 +151,12 @@ class _AuthScreenState extends State<AuthScreen> {
                     });
                   }
                 },
+                rightButtonEnabled:
+                    currentScreen == AuthType.logIn ||
+                    (username != "" && password != "" && email != ""),
+                leftButtonEnabled:
+                    currentScreen == AuthType.signUp ||
+                    (username != "" && password != ""),
                 mainButtonIsLeft: currentScreen == AuthType.logIn,
               ),
             ],

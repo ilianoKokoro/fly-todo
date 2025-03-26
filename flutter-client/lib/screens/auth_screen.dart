@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fly_todo/components/button_row.dart';
 import 'package:fly_todo/components/text_input_with_padding.dart';
 
 enum AuthType { logIn, signUp }
@@ -26,129 +27,98 @@ class _AuthScreenState extends State<AuthScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('Fly TODO')),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              currentScreen == AuthType.logIn ? 'Log In' : "Sign Up",
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: 500),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                currentScreen == AuthType.logIn ? 'Log In' : "Sign Up",
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
 
-            Flexible(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: 500),
+              Flexible(
                 child: Padding(
                   padding: EdgeInsets.all(16),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-
-                    children: [
-                      TextInputWithPadding(
-                        placeholder: 'Username',
-                        padding: 8,
-                        onChanged:
-                            (newValue) => {
-                              setState(() {
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        TextInputWithPadding(
+                          placeholder: 'Username',
+                          padding: 8,
+                          onChanged:
+                              (newValue) => setState(() {
                                 username = newValue;
                               }),
-                            },
-                      ),
-                      currentScreen == AuthType.signUp
-                          ? TextInputWithPadding(
-                            placeholder: 'Email',
-                            padding: 8,
-                            onChanged:
-                                (newValue) => {
-                                  setState(() {
+                        ),
+                        currentScreen == AuthType.signUp
+                            ? TextInputWithPadding(
+                              placeholder: 'Email',
+                              padding: 8,
+                              onChanged:
+                                  (newValue) => setState(() {
                                     email = newValue;
                                   }),
-                                },
-                            type: TextInputType.emailAddress,
-                          )
-                          : SizedBox.shrink(),
-                      TextInputWithPadding(
-                        placeholder: 'Password',
-                        padding: 8,
-                        onChanged:
-                            (newValue) => {
-                              setState(() {
+                              type: TextInputType.emailAddress,
+                            )
+                            : SizedBox.shrink(),
+                        TextInputWithPadding(
+                          placeholder: 'Password',
+                          padding: 8,
+                          onChanged:
+                              (newValue) => setState(() {
                                 password = newValue;
                               }),
-                            },
-                        type: TextInputType.visiblePassword,
-                      ),
-                      currentScreen == AuthType.signUp
-                          ? TextInputWithPadding(
-                            placeholder: 'Confirm Password',
-                            padding: 8,
-                            onChanged:
-                                (newValue) => {
-                                  setState(() {
+                          type: TextInputType.visiblePassword,
+                        ),
+                        currentScreen == AuthType.signUp
+                            ? TextInputWithPadding(
+                              placeholder: 'Confirm Password',
+                              padding: 8,
+                              onChanged:
+                                  (newValue) => setState(() {
                                     passwordConfirm = newValue;
                                   }),
-                                },
-                            type: TextInputType.visiblePassword,
-                          )
-                          : SizedBox.shrink(),
-                    ],
+                              type: TextInputType.visiblePassword,
+                            )
+                            : SizedBox.shrink(),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  style:
-                      currentScreen == AuthType.logIn
-                          ? ButtonStyle(
-                            backgroundColor: WidgetStateProperty.all<Color?>(
-                              Theme.of(context).colorScheme.primary,
-                            ),
-                            foregroundColor: WidgetStateProperty.all<Color?>(
-                              Theme.of(context).colorScheme.onPrimary,
-                            ),
-                          )
-                          : ButtonStyle(),
-                  child: const Text('Log In'),
-                  onPressed: () {
+              BottomButtonRow(
+                leftButtonText: 'Log In',
+                leftButtonAction: () {
+                  if (currentScreen == AuthType.logIn) {
+                    executeAuthentication();
+                  } else {
                     setState(() {
-                      if (currentScreen == AuthType.logIn) {
-                      } else {
-                        currentScreen = AuthType.logIn;
-                      }
+                      currentScreen = AuthType.logIn;
                     });
-                  },
-                ),
-                ElevatedButton(
-                  style:
-                      currentScreen == AuthType.signUp
-                          ? ButtonStyle(
-                            backgroundColor: WidgetStateProperty.all<Color?>(
-                              Theme.of(context).colorScheme.primary,
-                            ),
-                            foregroundColor: WidgetStateProperty.all<Color?>(
-                              Theme.of(context).colorScheme.onPrimary,
-                            ),
-                          )
-                          : ButtonStyle(),
-                  child: const Text('Sign Up'),
-                  onPressed: () {
+                  }
+                },
+                rightButtonText: 'Sign Up',
+                rightButtonAction: () {
+                  if (currentScreen == AuthType.signUp) {
+                    executeAuthentication();
+                  } else {
                     setState(() {
-                      if (currentScreen == AuthType.signUp) {
-                      } else {
-                        currentScreen = AuthType.signUp;
-                      }
+                      currentScreen = AuthType.signUp;
                     });
-                  },
-                ),
-              ],
-            ),
-          ],
+                  }
+                },
+                mainButtonIsLeft: currentScreen == AuthType.logIn,
+              ),
+            ],
+          ),
         ),
       ),
     );

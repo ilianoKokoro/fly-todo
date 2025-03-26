@@ -13,7 +13,7 @@ class HomeScreen extends StatelessWidget {
           onPressed: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const AuthScreen()),
+              MaterialPageRoute(builder: (context) => AuthScreen()),
             );
           },
           child: const Text('Go back!'),

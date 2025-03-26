@@ -17,9 +17,9 @@ export default (err, req, res, next) => {
                     if (err.keyValue) {
                         const property = Object.keys(err.keyValue)[0];
                         const value = err.keyValue[property];
-                        error.userMessage = `La propriété ${property} avec la valeur ${value} ne respecte pas une contrainte d'unicitié.`;
+                        error.userMessage = `The property ${property} with the value ${value} is not unique.`;
                     } else {
-                        error.userMessage = `Une propriété ne respecte pas une contrainte d'unicitié.`;
+                        error.userMessage = `One of the information entered is not unique.`;
                     }
             }
         }

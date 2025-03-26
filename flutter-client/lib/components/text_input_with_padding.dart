@@ -5,12 +5,14 @@ class TextInputWithPadding extends StatelessWidget {
   final double padding;
   final Function onChanged;
   final TextInputType type;
+  final bool enabled;
 
   const TextInputWithPadding({
     required this.placeholder,
     required this.padding,
     required this.onChanged,
     this.type = TextInputType.text,
+    this.enabled = true,
     super.key,
   });
 
@@ -19,6 +21,7 @@ class TextInputWithPadding extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.all(padding),
       child: TextField(
+        enabled: enabled,
         decoration: InputDecoration(
           border: OutlineInputBorder(),
           hintText: placeholder,

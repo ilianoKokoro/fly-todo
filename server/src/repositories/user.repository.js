@@ -33,9 +33,7 @@ class UserRepository {
             const user = await User.findOne({ name: name });
 
             if (!user || !(await this.validatePassword(password, user))) {
-                throw HttpErrors.Unauthorized(
-                    "Unauthorized access. Invalid username or password."
-                );
+                throw HttpErrors.Unauthorized("Invalid username or password.");
             }
 
             return { user: user };

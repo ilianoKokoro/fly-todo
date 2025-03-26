@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fly_todo/components/button_row.dart';
 import 'package:fly_todo/components/text_input_with_padding.dart';
+import 'package:fly_todo/core/extensions.dart';
 import 'package:fly_todo/repositories/auth_repository.dart';
+import 'package:fly_todo/screens/home_screen.dart';
 
 enum AuthType { logIn, signUp }
 
@@ -41,21 +43,29 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   void executeAuthentication() async {
-    if (loading == true) {
-      return;
-    }
-    loading = true;
-
-    if (currentScreen == AuthType.logIn) {
-      await logIn(username, password);
-    } else {
-      if (password != passwordConfirm) {
-        showError("The passwords do not match");
+    try {
+      if (loading == true) {
         return;
       }
-      await signUp(username, email, password);
+      loading = true;
+      if (currentScreen == AuthType.logIn) {
+        await logIn(username, password);
+      } else {
+        if (password != passwordConfirm) {
+          throw Exception("The passwords do not match");
+        }
+        await signUp(username, email, password);
+      }
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomeScreen()),
+      );
+    } on Exception catch (err) {
+      showError(err.getMessage);
+    } finally {
+      loading = false;
     }
-    loading = false;
   }
 
   @override
@@ -86,6 +96,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         TextInputWithPadding(
+                          enabled: !loading,
                           placeholder: 'Username',
                           padding: 8,
                           onChanged:
@@ -95,6 +106,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         ),
                         currentScreen == AuthType.signUp
                             ? TextInputWithPadding(
+                              enabled: !loading,
                               placeholder: 'Email',
                               padding: 8,
                               onChanged:
@@ -105,6 +117,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             )
                             : SizedBox.shrink(),
                         TextInputWithPadding(
+                          enabled: !loading,
                           placeholder: 'Password',
                           padding: 8,
                           onChanged:
@@ -115,6 +128,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         ),
                         currentScreen == AuthType.signUp
                             ? TextInputWithPadding(
+                              enabled: !loading,
                               placeholder: 'Confirm Password',
                               padding: 8,
                               onChanged:
@@ -152,10 +166,10 @@ class _AuthScreenState extends State<AuthScreen> {
                   }
                 },
                 rightButtonEnabled:
-                    currentScreen == AuthType.logIn ||
+                    (currentScreen == AuthType.logIn && !loading) ||
                     (username != "" && password != "" && email != ""),
                 leftButtonEnabled:
-                    currentScreen == AuthType.signUp ||
+                    (currentScreen == AuthType.signUp && !loading) ||
                     (username != "" && password != ""),
                 mainButtonIsLeft: currentScreen == AuthType.logIn,
               ),

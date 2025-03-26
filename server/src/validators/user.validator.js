@@ -16,14 +16,14 @@ class UserValidators {
             body("name")
                 .optional()
                 .isLength({ min: 2, max: 16 })
-                .withMessage("Le nom doit comporter entre 2 et 16 caractères")
+                .withMessage("The name must have between 2 and 16 characters")
                 .bail(),
 
             body("email")
                 .optional()
                 .trim()
                 .isEmail()
-                .withMessage("Le format du courriel entré est invalide")
+                .withMessage("The email entered is invalid")
                 .bail(),
 
             body("password")
@@ -36,7 +36,7 @@ class UserValidators {
                     minSymbols: 1,
                 })
                 .withMessage(
-                    "Le mot de passe doit contenir au moins 8 caractères, avec au moins une lettre minuscule, une lettre majuscule, un chiffre et un symbole"
+                    "The password must be at least 8 characters, with at least a lowercase letter, an uppercase letter, a number and a symbol"
                 )
                 .bail(),
         ];

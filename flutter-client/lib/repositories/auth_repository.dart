@@ -2,8 +2,6 @@ import "dart:convert";
 
 import "package:fly_todo/core/constants.dart";
 import "package:fly_todo/core/error_helper.dart";
-import "package:fly_todo/models/tokens.dart";
-import "package:fly_todo/models/user.dart";
 import "package:http/http.dart" as http;
 
 class AuthRepository {

@@ -8,13 +8,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 class DatastoreRepository {
   void saveUser(User user) async {
     final preferences = await SharedPreferences.getInstance();
-    await preferences.setString(Datastore.user, user.toJson().toString());
+    await preferences.setString(Datastore.user, jsonEncode(user.toJson()));
   }
 
   Future<User> getUser() async {
     final preferences = await SharedPreferences.getInstance();
 
-    String? user = await preferences.getString(Datastore.user);
+    String? user = preferences.getString(Datastore.user);
 
     if (user == null) {
       throw Exception("No saved user");
@@ -23,15 +23,15 @@ class DatastoreRepository {
     return User.fromJson(jsonDecode(user));
   }
 
-  void saveTokens(Tokens user) async {
+  void saveTokens(Tokens tokens) async {
     final preferences = await SharedPreferences.getInstance();
-    await preferences.setString(Datastore.user, user.toJson().toString());
+    await preferences.setString(Datastore.jwt, jsonEncode(tokens.toJson()));
   }
 
   Future<Tokens> getTokens() async {
     final preferences = await SharedPreferences.getInstance();
 
-    String? tokens = await preferences.getString(Datastore.jwt);
+    String? tokens = preferences.getString(Datastore.jwt);
 
     if (tokens == null) {
       throw Exception("No saved JWT");

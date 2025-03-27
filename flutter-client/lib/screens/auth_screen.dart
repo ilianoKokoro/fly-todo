@@ -28,16 +28,17 @@ class _AuthScreenState extends State<AuthScreen> {
   String _passwordConfirm = "";
   AuthType _currentScreen = AuthType.logIn;
 
-  AuthRepository _authRepository = AuthRepository();
-  DatastoreRepository _datastoreRepository = DatastoreRepository();
-  TaskRepository _taskRepository = TaskRepository();
+  final AuthRepository _authRepository = AuthRepository();
+  final DatastoreRepository _datastoreRepository = DatastoreRepository();
+  final TaskRepository _taskRepository = TaskRepository();
 
   Future<void> tryAutomaticAuth() async {
     try {
       User savedUser = await _datastoreRepository.getUser();
       await _taskRepository.getUserTasks(savedUser);
-    } catch (_) {
-      // Do nothing
+      _goToHomeScreen();
+    } catch (err) {
+      print(err);
     }
   }
 
@@ -91,16 +92,20 @@ class _AuthScreenState extends State<AuthScreen> {
       _datastoreRepository.saveTokens(tokens);
       _datastoreRepository.saveUser(user);
 
-      if (!mounted) return;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomeScreen()),
-      );
+      _goToHomeScreen();
     } on Exception catch (err) {
       _showError(err.getMessage);
     } finally {
       _loading = false;
     }
+  }
+
+  void _goToHomeScreen() {
+    if (!mounted) return;
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => HomeScreen()),
+    );
   }
 
   @override

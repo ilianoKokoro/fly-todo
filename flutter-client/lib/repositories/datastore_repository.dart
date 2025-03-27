@@ -39,4 +39,19 @@ class DatastoreRepository {
 
     return Tokens.fromJson(jsonDecode(tokens));
   }
+
+  void clearTokens() async {
+    final preferences = await SharedPreferences.getInstance();
+    await preferences.remove(Datastore.jwt);
+  }
+
+  void clearUser() async {
+    final preferences = await SharedPreferences.getInstance();
+    await preferences.remove(Datastore.user);
+  }
+
+  void clearDatastore() async {
+    final preferences = await SharedPreferences.getInstance();
+    preferences.clear();
+  }
 }

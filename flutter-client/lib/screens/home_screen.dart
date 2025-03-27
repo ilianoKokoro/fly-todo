@@ -1,24 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:fly_todo/core/constants.dart';
+import 'package:fly_todo/repositories/datastore_repository.dart';
 import 'package:fly_todo/screens/auth_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final DatastoreRepository _datastoreRepository = DatastoreRepository();
+
+  void _logOut() {
+    _datastoreRepository.clearDatastore();
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => AuthScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+        transitionDuration: Duration(milliseconds: Transitions.duration),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Fly TODO')),
-      body: Center(
-        child: ElevatedButton(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.logout),
           onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => AuthScreen()),
-            );
+            _logOut();
           },
-          child: const Text('Go back!'),
         ),
+        title: const Text(App.title),
       ),
+      body: Center(child: Column()),
     );
   }
 }

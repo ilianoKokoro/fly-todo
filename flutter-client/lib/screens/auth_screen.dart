@@ -3,12 +3,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fly_todo/components/button_row.dart';
 import 'package:fly_todo/components/text_input_with_padding.dart';
+import 'package:fly_todo/core/constants.dart';
 import 'package:fly_todo/core/extensions.dart';
 import 'package:fly_todo/models/tokens.dart';
 import 'package:fly_todo/models/user.dart';
 import 'package:fly_todo/repositories/auth_repository.dart';
 import 'package:fly_todo/repositories/datastore_repository.dart';
-import 'package:fly_todo/repositories/task_repository.dart';
 import 'package:fly_todo/screens/home_screen.dart';
 
 enum AuthType { logIn, signUp }
@@ -30,16 +30,13 @@ class _AuthScreenState extends State<AuthScreen> {
 
   final AuthRepository _authRepository = AuthRepository();
   final DatastoreRepository _datastoreRepository = DatastoreRepository();
-  final TaskRepository _taskRepository = TaskRepository();
 
   Future<void> tryAutomaticAuth() async {
     try {
       User savedUser = await _datastoreRepository.getUser();
-      await _taskRepository.getUserTasks(savedUser);
+      await savedUser.getTasks();
       _goToHomeScreen();
-    } catch (err) {
-      print(err);
-    }
+    } catch (_) {}
   }
 
   @override
@@ -111,7 +108,7 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Fly TODO')),
+      appBar: AppBar(title: const Text(App.title)),
       body: Center(
         child: ConstrainedBox(
           constraints: BoxConstraints(maxWidth: 500),
@@ -119,14 +116,6 @@ class _AuthScreenState extends State<AuthScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                _currentScreen == AuthType.logIn ? 'Log In' : "Sign Up",
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-
               Flexible(
                 child: Padding(
                   padding: EdgeInsets.all(16),

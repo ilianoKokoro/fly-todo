@@ -1,5 +1,5 @@
 class Urls {
-  static final String base = "https://fly-todo-api.vercel.app";
+  static const String base = "https://fly-todo-api.vercel.app";
   static final String users = "$base/users";
   static final String usersActions = "$users/actions";
   static final String login = "$usersActions/login";
@@ -9,6 +9,14 @@ class Urls {
 }
 
 class Datastore {
-  static final String user = "user";
-  static final String jwt = "jwt";
+  static const String user = "user";
+  static const String jwt = "jwt";
+}
+
+class Transitions {
+  static const int duration = 200;
+}
+
+class App {
+  static const String title = "Fly TODO";
 }

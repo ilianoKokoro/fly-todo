@@ -67,7 +67,7 @@ class UserRouter {
                 const tokens = userRepository.generateJWT(user, true);
                 user = userRepository.transform(user);
 
-                res.status(201).json({ user, tokens });
+                res.status(200).json({ user, tokens });
             }
         } catch (err) {
             return next(err);

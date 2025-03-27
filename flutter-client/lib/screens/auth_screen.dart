@@ -1,8 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:fly_todo/components/button_row.dart';
 import 'package:fly_todo/components/text_input_with_padding.dart';
 import 'package:fly_todo/core/extensions.dart';
+import 'package:fly_todo/models/tokens.dart';
+import 'package:fly_todo/models/user.dart';
 import 'package:fly_todo/repositories/auth_repository.dart';
+import 'package:fly_todo/repositories/datastore_repository.dart';
+import 'package:fly_todo/repositories/task_repository.dart';
 import 'package:fly_todo/screens/home_screen.dart';
 
 enum AuthType { logIn, signUp }
@@ -15,14 +21,35 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-  bool loading = false;
-  String username = "";
-  String email = "";
-  String password = "";
-  String passwordConfirm = "";
-  AuthType currentScreen = AuthType.logIn;
+  bool _loading = false;
+  String _username = "";
+  String _email = "";
+  String _password = "";
+  String _passwordConfirm = "";
+  AuthType _currentScreen = AuthType.logIn;
 
-  void showError(String message) {
+  AuthRepository _authRepository = AuthRepository();
+  DatastoreRepository _datastoreRepository = DatastoreRepository();
+  TaskRepository _taskRepository = TaskRepository();
+
+  Future<void> tryAutomaticAuth() async {
+    try {
+      User savedUser = await _datastoreRepository.getUser();
+      await _taskRepository.getUserTasks(savedUser);
+    } catch (_) {
+      // Do nothing
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await tryAutomaticAuth();
+    });
+  }
+
+  void _showError(String message) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -42,29 +69,37 @@ class _AuthScreenState extends State<AuthScreen> {
     );
   }
 
-  void executeAuthentication() async {
+  void _executeAuthentication() async {
     try {
-      if (loading == true) {
+      if (_loading == true) {
         return;
       }
-      loading = true;
-      if (currentScreen == AuthType.logIn) {
-        await logIn(username, password);
+      _loading = true;
+      String bodyResult;
+      if (_currentScreen == AuthType.logIn) {
+        bodyResult = await _authRepository.logIn(_username, _password);
       } else {
-        if (password != passwordConfirm) {
+        if (_password != _passwordConfirm) {
           throw Exception("The passwords do not match");
         }
-        await signUp(username, email, password);
+        bodyResult = await _authRepository.signUp(_username, _email, _password);
       }
+
+      User user = User.fromJson(jsonDecode(bodyResult)["user"]);
+      Tokens tokens = Tokens.fromJson(jsonDecode(bodyResult)["tokens"]);
+
+      _datastoreRepository.saveTokens(tokens);
+      _datastoreRepository.saveUser(user);
+
       if (!mounted) return;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => HomeScreen()),
       );
     } on Exception catch (err) {
-      showError(err.getMessage);
+      _showError(err.getMessage);
     } finally {
-      loading = false;
+      _loading = false;
     }
   }
 
@@ -80,7 +115,7 @@ class _AuthScreenState extends State<AuthScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                currentScreen == AuthType.logIn ? 'Log In' : "Sign Up",
+                _currentScreen == AuthType.logIn ? 'Log In' : "Sign Up",
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -96,44 +131,44 @@ class _AuthScreenState extends State<AuthScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         TextInputWithPadding(
-                          enabled: !loading,
+                          enabled: !_loading,
                           placeholder: 'Username',
                           padding: 8,
                           onChanged:
                               (newValue) => setState(() {
-                                username = newValue;
+                                _username = newValue;
                               }),
                         ),
-                        currentScreen == AuthType.signUp
+                        _currentScreen == AuthType.signUp
                             ? TextInputWithPadding(
-                              enabled: !loading,
+                              enabled: !_loading,
                               placeholder: 'Email',
                               padding: 8,
                               onChanged:
                                   (newValue) => setState(() {
-                                    email = newValue;
+                                    _email = newValue;
                                   }),
                               type: TextInputType.emailAddress,
                             )
                             : SizedBox.shrink(),
                         TextInputWithPadding(
-                          enabled: !loading,
+                          enabled: !_loading,
                           placeholder: 'Password',
                           padding: 8,
                           onChanged:
                               (newValue) => setState(() {
-                                password = newValue;
+                                _password = newValue;
                               }),
                           type: TextInputType.visiblePassword,
                         ),
-                        currentScreen == AuthType.signUp
+                        _currentScreen == AuthType.signUp
                             ? TextInputWithPadding(
-                              enabled: !loading,
+                              enabled: !_loading,
                               placeholder: 'Confirm Password',
                               padding: 8,
                               onChanged:
                                   (newValue) => setState(() {
-                                    passwordConfirm = newValue;
+                                    _passwordConfirm = newValue;
                                   }),
                               type: TextInputType.visiblePassword,
                             )
@@ -147,31 +182,31 @@ class _AuthScreenState extends State<AuthScreen> {
               BottomButtonRow(
                 leftButtonText: 'Log In',
                 leftButtonAction: () {
-                  if (currentScreen == AuthType.logIn) {
-                    executeAuthentication();
+                  if (_currentScreen == AuthType.logIn) {
+                    _executeAuthentication();
                   } else {
                     setState(() {
-                      currentScreen = AuthType.logIn;
+                      _currentScreen = AuthType.logIn;
                     });
                   }
                 },
                 rightButtonText: 'Sign Up',
                 rightButtonAction: () {
-                  if (currentScreen == AuthType.signUp) {
-                    executeAuthentication();
+                  if (_currentScreen == AuthType.signUp) {
+                    _executeAuthentication();
                   } else {
                     setState(() {
-                      currentScreen = AuthType.signUp;
+                      _currentScreen = AuthType.signUp;
                     });
                   }
                 },
                 rightButtonEnabled:
-                    (currentScreen == AuthType.logIn && !loading) ||
-                    (username != "" && password != "" && email != ""),
+                    (_currentScreen == AuthType.logIn && !_loading) ||
+                    (_username != "" && _password != "" && _email != ""),
                 leftButtonEnabled:
-                    (currentScreen == AuthType.signUp && !loading) ||
-                    (username != "" && password != ""),
-                mainButtonIsLeft: currentScreen == AuthType.logIn,
+                    (_currentScreen == AuthType.signUp && !_loading) ||
+                    (_username != "" && _password != ""),
+                mainButtonIsLeft: _currentScreen == AuthType.logIn,
               ),
             ],
           ),

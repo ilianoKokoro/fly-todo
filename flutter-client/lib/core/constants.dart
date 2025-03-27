@@ -7,3 +7,8 @@ class Urls {
   static final String logout = "$usersActions/logout";
   static final String signup = "$base/users";
 }
+
+class Datastore {
+  static final String user = "user";
+  static final String jwt = "jwt";
+}

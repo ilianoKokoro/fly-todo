@@ -64,8 +64,10 @@ class _AuthScreenState extends State<AuthScreen> {
         bodyResult = await _authRepository.signUp(_username, _email, _password);
       }
 
-      User user = User.fromJson(jsonDecode(bodyResult)["user"]);
-      Tokens tokens = Tokens.fromJson(jsonDecode(bodyResult)["tokens"]);
+      var decodedBody = jsonDecode(bodyResult);
+
+      User user = User.fromJson(decodedBody["user"]);
+      Tokens tokens = Tokens.fromJson(decodedBody["tokens"]);
 
       _datastoreRepository.saveTokens(tokens);
       _datastoreRepository.saveUser(user);
@@ -137,6 +139,11 @@ class _AuthScreenState extends State<AuthScreen> {
                                 _password = newValue;
                               }),
                           type: TextInputType.visiblePassword,
+                          onSubmitted:
+                              () => {
+                                if (_currentScreen == AuthType.logIn)
+                                  {_executeAuthentication()},
+                              },
                         ),
                         _currentScreen == AuthType.signUp
                             ? TextInputWithPadding(
@@ -148,6 +155,11 @@ class _AuthScreenState extends State<AuthScreen> {
                                     _passwordConfirm = newValue;
                                   }),
                               type: TextInputType.visiblePassword,
+                              onSubmitted:
+                                  () => {
+                                    if (_currentScreen == AuthType.signUp)
+                                      {_executeAuthentication()},
+                                  },
                             )
                             : SizedBox.shrink(),
                       ],

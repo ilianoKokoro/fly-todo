@@ -4,6 +4,7 @@ class TextInputWithPadding extends StatelessWidget {
   final String placeholder;
   final double padding;
   final Function onChanged;
+  final Function? onSubmitted;
   final TextInputType type;
   final bool enabled;
 
@@ -13,6 +14,7 @@ class TextInputWithPadding extends StatelessWidget {
     required this.onChanged,
     this.type = TextInputType.text,
     this.enabled = true,
+    this.onSubmitted,
     super.key,
   });
 
@@ -29,6 +31,7 @@ class TextInputWithPadding extends StatelessWidget {
         onChanged: (value) => onChanged(value),
         keyboardType: type,
         obscureText: type == TextInputType.visiblePassword,
+        onSubmitted: onSubmitted != null ? (_) => onSubmitted!() : null,
       ),
     );
   }

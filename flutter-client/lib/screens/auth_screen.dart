@@ -36,7 +36,9 @@ class _AuthScreenState extends State<AuthScreen> {
       User savedUser = await _datastoreRepository.getUser();
       await savedUser.getTasks();
       _goToHomeScreen();
-    } catch (_) {}
+    } catch (err) {
+      print(err);
+    }
   }
 
   @override

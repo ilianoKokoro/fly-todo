@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class Urls {
   static const String base = "https://fly-todo-api.vercel.app";
   static final String users = "$base/users";
@@ -19,4 +21,5 @@ class Transitions {
 
 class App {
   static const String title = "Fly TODO";
+  static const Color fallbackPrimary = Colors.blue;
 }

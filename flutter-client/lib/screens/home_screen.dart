@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fly_todo/core/constants.dart';
+import 'package:fly_todo/core/extensions.dart';
+import 'package:fly_todo/core/show_error.dart';
 import 'package:fly_todo/repositories/auth_repository.dart';
 import 'package:fly_todo/repositories/datastore_repository.dart';
 import 'package:fly_todo/screens/auth_screen.dart';
@@ -38,7 +40,11 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         );
       }
-    } catch (_) {}
+    } on Exception catch (err) {
+      if (context.mounted) {
+        showError(err, context);
+      }
+    }
   }
 
   @override

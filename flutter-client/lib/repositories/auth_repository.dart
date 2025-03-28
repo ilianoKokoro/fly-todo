@@ -3,9 +3,12 @@ import "dart:convert";
 import "package:fly_todo/core/constants.dart";
 import "package:fly_todo/core/error_helper.dart";
 import "package:fly_todo/models/tokens.dart";
+import "package:fly_todo/repositories/datastore_repository.dart";
 import "package:http/http.dart" as http;
 
 class AuthRepository {
+  final DatastoreRepository _datastoreRepository = DatastoreRepository();
+
   Future<String> logIn(String username, String password) async {
     final body = {"name": username, "password": password};
     final response = await http.post(
@@ -33,8 +36,9 @@ class AuthRepository {
   }
 
   void logOut() async {
-    Tokens tokens = Tokens("access", "access");
+    Tokens tokens = await _datastoreRepository.getTokens();
     final body = {"refreshToken": tokens.refresh};
+
     final response = await http.delete(
       Uri.parse(Urls.logout),
       headers: {
@@ -43,8 +47,6 @@ class AuthRepository {
       },
       body: jsonEncode(body),
     );
-
-    print(response.body);
 
     final success = response.statusCode == 204;
     if (success) return;

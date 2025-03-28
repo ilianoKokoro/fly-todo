@@ -5,6 +5,7 @@ import 'package:fly_todo/components/button_row.dart';
 import 'package:fly_todo/components/text_input_with_padding.dart';
 import 'package:fly_todo/core/constants.dart';
 import 'package:fly_todo/core/extensions.dart';
+import 'package:fly_todo/core/show_error.dart';
 import 'package:fly_todo/models/tokens.dart';
 import 'package:fly_todo/models/user.dart';
 import 'package:fly_todo/repositories/auth_repository.dart';
@@ -36,9 +37,7 @@ class _AuthScreenState extends State<AuthScreen> {
       User savedUser = await _datastoreRepository.getUser();
       await savedUser.getTasks();
       _goToHomeScreen();
-    } catch (err) {
-      print(err);
-    }
+    } catch (_) {}
   }
 
   @override
@@ -47,26 +46,6 @@ class _AuthScreenState extends State<AuthScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await tryAutomaticAuth();
     });
-  }
-
-  void _showError(String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Error"),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              child: Text("OK"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   void _executeAuthentication() async {
@@ -93,7 +72,9 @@ class _AuthScreenState extends State<AuthScreen> {
 
       _goToHomeScreen();
     } on Exception catch (err) {
-      _showError(err.getMessage);
+      if (context.mounted) {
+        showError(err, context);
+      }
     } finally {
       _loading = false;
     }

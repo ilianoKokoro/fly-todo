@@ -25,6 +25,8 @@ class MyApp extends StatelessWidget {
             );
 
         return MaterialApp(
+          locale: Locale("en"),
+          title: App.title,
           theme: ThemeData(colorScheme: lightScheme, useMaterial3: true),
           darkTheme: ThemeData(colorScheme: darkScheme, useMaterial3: true),
           themeMode: ThemeMode.system,

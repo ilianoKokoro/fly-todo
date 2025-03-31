@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fly_todo/components/task_row.dart';
-import 'package:fly_todo/core/Modal.dart';
+import 'package:fly_todo/core/modal.dart';
 import 'package:fly_todo/core/constants.dart';
 import 'package:fly_todo/models/task.dart';
 import 'package:fly_todo/models/user.dart';

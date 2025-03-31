@@ -32,22 +32,6 @@ class _AuthScreenState extends State<AuthScreen> {
   final AuthRepository _authRepository = AuthRepository();
   final DatastoreRepository _datastoreRepository = DatastoreRepository();
 
-  Future<void> tryAutomaticAuth() async {
-    try {
-      User savedUser = await _datastoreRepository.getUser();
-      var tasks = await savedUser.getTasks();
-      _goToHomeScreen(tasks, true);
-    } catch (_) {}
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await tryAutomaticAuth();
-    });
-  }
-
   void _executeAuthentication() async {
     try {
       if (_loading == true) {
@@ -72,7 +56,7 @@ class _AuthScreenState extends State<AuthScreen> {
       _datastoreRepository.saveTokens(tokens);
       _datastoreRepository.saveUser(user);
 
-      _goToHomeScreen([], false);
+      _goToHomeScreen();
     } on Exception catch (err) {
       if (context.mounted) {
         Modal.showError(err, context);
@@ -82,11 +66,11 @@ class _AuthScreenState extends State<AuthScreen> {
     }
   }
 
-  void _goToHomeScreen(List<Task> tasks, bool cached) {
+  void _goToHomeScreen() {
     if (!mounted) return;
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => HomeScreen(tasks: tasks)),
+      MaterialPageRoute(builder: (context) => HomeScreen()),
     );
   }
 

@@ -3,23 +3,42 @@ import 'package:fly_todo/components/task_row.dart';
 import 'package:fly_todo/core/Modal.dart';
 import 'package:fly_todo/core/constants.dart';
 import 'package:fly_todo/models/task.dart';
+import 'package:fly_todo/models/user.dart';
 import 'package:fly_todo/repositories/auth_repository.dart';
 import 'package:fly_todo/repositories/datastore_repository.dart';
 import 'package:fly_todo/screens/auth_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen({super.key, required this.tasks});
+  HomeScreen({super.key});
 
   final DatastoreRepository datastoreRepository = DatastoreRepository();
   final AuthRepository authRepository = AuthRepository();
-  final List<Task> tasks;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  void _logOut() {
+  List<Task> _tasks = [];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await tryAutomaticAuth();
+    });
+  }
+
+  Future<void> tryAutomaticAuth() async {
+    try {
+      User savedUser = await widget.datastoreRepository.getUser();
+      _tasks = await savedUser.getTasks();
+    } catch (_) {
+      _logOut();
+    }
+  }
+
+  void _logOut({bool showMessage = false}) {
     try {
       try {
         widget.authRepository.logOut();
@@ -41,11 +60,13 @@ class _HomeScreenState extends State<HomeScreen> {
             transitionDuration: Duration(milliseconds: Transitions.duration),
           ),
         );
-        Modal.showInfo(
-          "Log out successful",
-          "Successfully logged out",
-          context,
-        );
+        if (showMessage) {
+          Modal.showInfo(
+            "Log out successful",
+            "Successfully logged out",
+            context,
+          );
+        }
       }
     } on Exception catch (err) {
       if (context.mounted) {
@@ -68,12 +89,15 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Center(
         child:
-            widget.tasks.isEmpty
+            _tasks.isEmpty
                 ? Text("No tasks created")
                 : SingleChildScrollView(
                   child: Column(
                     children: [
-                      ...widget.tasks.map((model) => TaskRow(task: model)),
+                      ..._tasks.map(
+                        (model) =>
+                            TaskRow(task: model, onTaskUpdated: (p0) => {}),
+                      ),
                     ],
                   ),
                 ),

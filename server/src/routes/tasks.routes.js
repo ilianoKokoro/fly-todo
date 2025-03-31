@@ -72,7 +72,7 @@ class TaskRouter {
             task = task.toObject({ getters: false, virtuals: true });
             task = tasksRepository.transform(task, req.params.user_uuid);
 
-            res.status(201).json(task);
+            res.status(200).json(task);
         } catch (err) {
             return next(err);
         }

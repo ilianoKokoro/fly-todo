@@ -20,28 +20,46 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<Task> _tasks = [];
+  bool _loading = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await tryAutomaticAuth();
+      await getTasks();
     });
   }
 
-  Future<void> tryAutomaticAuth() async {
+  Future<void> getTasks() async {
+    setState(() {
+      _loading = true;
+    });
+
     try {
       User savedUser = await widget.datastoreRepository.getUser();
-      _tasks = await savedUser.getTasks();
+      var tasks = await savedUser.getTasks();
+      setState(() {
+        _tasks = tasks;
+      });
+
+      setState(() {
+        _loading = false;
+      });
     } catch (_) {
-      _logOut();
+      _logOut(serverSide: false);
     }
   }
 
-  void _logOut({bool showMessage = false}) {
+  void _logOut({bool serverSide = true}) {
+    setState(() {
+      _loading = true;
+    });
+
     try {
       try {
-        widget.authRepository.logOut();
+        if (serverSide) {
+          widget.authRepository.logOut();
+        }
       } finally {
         widget.datastoreRepository.clearDatastore();
         Navigator.pushReplacement(
@@ -60,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
             transitionDuration: Duration(milliseconds: Transitions.duration),
           ),
         );
-        if (showMessage) {
+        if (serverSide) {
           Modal.showInfo(
             "Log out successful",
             "Successfully logged out",
@@ -89,16 +107,13 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Center(
         child:
-            _tasks.isEmpty
+            _loading
+                ? CircularProgressIndicator()
+                : _tasks.isEmpty
                 ? Text("No tasks created")
                 : SingleChildScrollView(
                   child: Column(
-                    children: [
-                      ..._tasks.map(
-                        (model) =>
-                            TaskRow(task: model, onTaskUpdated: (p0) => {}),
-                      ),
-                    ],
+                    children: [..._tasks.map((model) => TaskRow(task: model))],
                   ),
                 ),
       ),

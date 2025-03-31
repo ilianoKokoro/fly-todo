@@ -1,3 +1,5 @@
+import 'package:fly_todo/repositories/task_repository.dart';
+
 class Task {
   String name;
   bool isCompleted;
@@ -15,4 +17,9 @@ class Task {
     'isCompleted': isCompleted,
     "href": href,
   };
+
+  void update() async {
+    final TaskRepository taskRepository = TaskRepository();
+    await taskRepository.updateTask(this);
+  }
 }

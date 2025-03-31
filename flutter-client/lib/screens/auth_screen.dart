@@ -5,7 +5,6 @@ import 'package:fly_todo/components/button_row.dart';
 import 'package:fly_todo/components/text_input_with_padding.dart';
 import 'package:fly_todo/core/constants.dart';
 import 'package:fly_todo/core/modal.dart';
-import 'package:fly_todo/models/task.dart';
 import 'package:fly_todo/models/tokens.dart';
 import 'package:fly_todo/models/user.dart';
 import 'package:fly_todo/repositories/auth_repository.dart';
@@ -37,7 +36,9 @@ class _AuthScreenState extends State<AuthScreen> {
       if (_loading == true) {
         return;
       }
-      _loading = true;
+      setState(() {
+        _loading = true;
+      });
       String bodyResult;
       if (_currentScreen == AuthType.logIn) {
         bodyResult = await _authRepository.logIn(_username, _password);
@@ -62,7 +63,9 @@ class _AuthScreenState extends State<AuthScreen> {
         Modal.showError(err, context);
       }
     } finally {
-      _loading = false;
+      setState(() {
+        _loading = false;
+      });
     }
   }
 
@@ -88,67 +91,71 @@ class _AuthScreenState extends State<AuthScreen> {
               Flexible(
                 child: Padding(
                   padding: EdgeInsets.all(16),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        TextInputWithPadding(
-                          enabled: !_loading,
-                          placeholder: 'Username',
-                          padding: 8,
-                          onChanged:
-                              (newValue) => setState(() {
-                                _username = newValue;
-                              }),
-                        ),
-                        _currentScreen == AuthType.signUp
-                            ? TextInputWithPadding(
-                              enabled: !_loading,
-                              placeholder: 'Email',
-                              padding: 8,
-                              onChanged:
-                                  (newValue) => setState(() {
-                                    _email = newValue;
-                                  }),
-                              type: TextInputType.emailAddress,
-                            )
-                            : SizedBox.shrink(),
-                        TextInputWithPadding(
-                          enabled: !_loading,
-                          placeholder: 'Password',
-                          padding: 8,
-                          onChanged:
-                              (newValue) => setState(() {
-                                _password = newValue;
-                              }),
-                          type: TextInputType.visiblePassword,
-                          onSubmitted:
-                              () => {
-                                if (_currentScreen == AuthType.logIn)
-                                  {_executeAuthentication()},
-                              },
-                        ),
-                        _currentScreen == AuthType.signUp
-                            ? TextInputWithPadding(
-                              enabled: !_loading,
-                              placeholder: 'Confirm Password',
-                              padding: 8,
-                              onChanged:
-                                  (newValue) => setState(() {
-                                    _passwordConfirm = newValue;
-                                  }),
-                              type: TextInputType.visiblePassword,
-                              onSubmitted:
-                                  () => {
-                                    if (_currentScreen == AuthType.signUp)
-                                      {_executeAuthentication()},
-                                  },
-                            )
-                            : SizedBox.shrink(),
-                      ],
-                    ),
-                  ),
+                  child:
+                      _loading
+                          ? CircularProgressIndicator()
+                          : SingleChildScrollView(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                TextInputWithPadding(
+                                  enabled: !_loading,
+                                  placeholder: 'Username',
+                                  padding: 8,
+                                  onChanged:
+                                      (newValue) => setState(() {
+                                        _username = newValue;
+                                      }),
+                                ),
+                                _currentScreen == AuthType.signUp
+                                    ? TextInputWithPadding(
+                                      enabled: !_loading,
+                                      placeholder: 'Email',
+                                      padding: 8,
+                                      onChanged:
+                                          (newValue) => setState(() {
+                                            _email = newValue;
+                                          }),
+                                      type: TextInputType.emailAddress,
+                                    )
+                                    : SizedBox.shrink(),
+                                TextInputWithPadding(
+                                  enabled: !_loading,
+                                  placeholder: 'Password',
+                                  padding: 8,
+                                  onChanged:
+                                      (newValue) => setState(() {
+                                        _password = newValue;
+                                      }),
+                                  type: TextInputType.visiblePassword,
+                                  onSubmitted:
+                                      () => {
+                                        if (_currentScreen == AuthType.logIn)
+                                          {_executeAuthentication()},
+                                      },
+                                ),
+                                _currentScreen == AuthType.signUp
+                                    ? TextInputWithPadding(
+                                      enabled: !_loading,
+                                      placeholder: 'Confirm Password',
+                                      padding: 8,
+                                      onChanged:
+                                          (newValue) => setState(() {
+                                            _passwordConfirm = newValue;
+                                          }),
+                                      type: TextInputType.visiblePassword,
+                                      onSubmitted:
+                                          () => {
+                                            if (_currentScreen ==
+                                                AuthType.signUp)
+                                              {_executeAuthentication()},
+                                          },
+                                    )
+                                    : SizedBox.shrink(),
+                              ],
+                            ),
+                          ),
                 ),
               ),
 

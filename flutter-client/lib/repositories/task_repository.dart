@@ -30,4 +30,20 @@ class TaskRepository {
 
     throw Exception(ErrorHelper.getErrorMessage(response.body));
   }
+
+  Future<Task> updateTask(Task task) async {
+    Tokens tokens = await _datastoreRepository.getTokens();
+    final response = await http.patch(
+      Uri.parse(task.href),
+      headers: {'Authorization': 'Bearer ${tokens.access}'},
+    );
+
+    final success = response.statusCode == 200;
+
+    if (success) {
+      return Task.fromJson(json.decode(response.body));
+    }
+
+    throw Exception(ErrorHelper.getErrorMessage(response.body));
+  }
 }

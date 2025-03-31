@@ -1,0 +1,22 @@
+meta {
+  name: Create one
+  type: http
+  seq: 1
+}
+
+post {
+  url: https://fly-todo-api.vercel.app/users/b1e241c8-a5ac-4b23-b9b8-d50f0c0122e0/tasks
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYXNkZiIsImlhdCI6MTc0MzQzNTIzOSwiZXhwIjoxNzQzNDM3MDM5LCJpc3MiOiJodHRwczovL2ZseS10b2RvLWFwaS52ZXJjZWwuYXBwIn0.RJ1sBGLCpV8ulUSC67iG_ap68z5S9bIAcQoplE7n4FU
+}
+
+body:json {
+   {
+     "name":"LONG YE YE AHH NAME LONG YE YE AHH NAME LONG YE YE AHH NAME",
+     "isCompleted":false
+   }
+}

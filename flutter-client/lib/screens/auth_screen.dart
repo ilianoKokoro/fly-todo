@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:fly_todo/components/button_row.dart';
 import 'package:fly_todo/components/text_input_with_padding.dart';
 import 'package:fly_todo/core/constants.dart';
-import 'package:fly_todo/core/extensions.dart';
-import 'package:fly_todo/core/show_error.dart';
+import 'package:fly_todo/core/modal.dart';
+import 'package:fly_todo/models/task.dart';
 import 'package:fly_todo/models/tokens.dart';
 import 'package:fly_todo/models/user.dart';
 import 'package:fly_todo/repositories/auth_repository.dart';
@@ -35,8 +35,8 @@ class _AuthScreenState extends State<AuthScreen> {
   Future<void> tryAutomaticAuth() async {
     try {
       User savedUser = await _datastoreRepository.getUser();
-      await savedUser.getTasks();
-      _goToHomeScreen();
+      var tasks = await savedUser.getTasks();
+      _goToHomeScreen(tasks, true);
     } catch (_) {}
   }
 
@@ -72,21 +72,21 @@ class _AuthScreenState extends State<AuthScreen> {
       _datastoreRepository.saveTokens(tokens);
       _datastoreRepository.saveUser(user);
 
-      _goToHomeScreen();
+      _goToHomeScreen([], false);
     } on Exception catch (err) {
       if (context.mounted) {
-        showError(err, context);
+        Modal.showError(err, context);
       }
     } finally {
       _loading = false;
     }
   }
 
-  void _goToHomeScreen() {
+  void _goToHomeScreen(List<Task> tasks, bool cached) {
     if (!mounted) return;
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => HomeScreen()),
+      MaterialPageRoute(builder: (context) => HomeScreen(tasks: tasks)),
     );
   }
 

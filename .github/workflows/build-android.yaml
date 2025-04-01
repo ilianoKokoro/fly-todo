@@ -9,7 +9,8 @@ on:
 
 env:
     SUB_DIR: flutter-client
-    TARGET_BINARY_NAME: fly-todo-release
+    ANDROID_TARGET_BINARY_NAME: android-fly-todo-release
+    WINDOWS_TARGET_BINARY_NAME: windows-fly-todo-release
     ANDROID_APK_LOCATION: ./build/app/outputs/flutter-apk/app-release.apk
     WINDOWS_BINARY_LOCATION: ./build/windows/x64/runner/Release/fly_todo.exe
 
@@ -32,15 +33,11 @@ jobs:
               working-directory: ${{env.SUB_DIR}}
               run: flutter build apk --release
 
-            - name: Rename APK
-              working-directory: ${{env.SUB_DIR}}
-              run: mv ${{env.ANDROID_APK_LOCATION}} ./${{env.TARGET_BINARY_NAME}}.apk
-
             - name: Upload APK
               uses: actions/upload-artifact@v4
               with:
-                  name: ${{env.TARGET_BINARY_NAME}}
-                  path: ./${{env.TARGET_BINARY_NAME}}.apk
+                  name: ${{env.ANDROID_TARGET_BINARY_NAME}}
+                  path: ${{env.ANDROID_APK_LOCATION}}
                   if-no-files-found: error
     build-windows-binary:
         runs-on: windows-latest
@@ -59,13 +56,9 @@ jobs:
               working-directory: ${{env.SUB_DIR}}
               run: flutter build windows
 
-            - name: Rename binary
-              working-directory: ${{env.SUB_DIR}}
-              run: mv ${{env.WINDOWS_BINARY_LOCATION}} ./${{env.TARGET_BINARY_NAME}}.apk
-
             - name: Upload binary
               uses: actions/upload-artifact@v4
               with:
-                  name: ${{env.TARGET_BINARY_NAME}}
-                  path: ./${{env.TARGET_BINARY_NAME}}.apk
+                  name: ${{env.WINDOWS_TARGET_BINARY_NAME}}
+                  path: ${{env.WINDOWS_BINARY_LOCATION}}
                   if-no-files-found: error

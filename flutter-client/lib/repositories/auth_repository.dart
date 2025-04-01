@@ -37,6 +37,8 @@ class AuthRepository {
     Tokens tokens = await _datastoreRepository.getTokens();
     final body = jsonEncode({"refreshToken": tokens.refresh});
     final responseBody = await RequestHelper.post(Urls.refresh, body);
-    _datastoreRepository.saveTokens(Tokens.fromJson(jsonDecode(responseBody)));
+    _datastoreRepository.saveTokens(
+      Tokens.fromJson(jsonDecode(responseBody)["tokens"]),
+    );
   }
 }

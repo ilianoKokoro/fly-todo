@@ -25,13 +25,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      // await getTasks();
-      widget.authRepository.refreshAccessToken();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getTasks();
     });
   }
 
-  Future<void> getTasks() async {
+  void getTasks() async {
     setState(() {
       _loading = true;
     });

@@ -42,7 +42,7 @@ abstract class RequestHelper {
   static Future<String> delete(String href, String body) async {
     final response = await http.delete(
       Uri.parse(href),
-      headers: await getHeaders(isJson: false),
+      headers: await getHeaders(isJson: true),
       body: body,
     );
     return handleResponse(response, 204);

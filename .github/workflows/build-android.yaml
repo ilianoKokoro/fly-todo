@@ -4,6 +4,7 @@ on:
             - prod
         paths:
             - "flutter-client/**"
+            - ".github/workflows/**"
     workflow_dispatch:
 
 env:

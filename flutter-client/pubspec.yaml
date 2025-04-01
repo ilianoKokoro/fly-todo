@@ -7,6 +7,7 @@ environment:
     sdk: ^3.7.2
 
 dependencies:
+    build_runner: ^2.4.15
     dynamic_color: ^1.7.0
     flutter:
         sdk: flutter

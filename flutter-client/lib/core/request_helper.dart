@@ -1,5 +1,6 @@
 import 'package:fly_todo/core/error_helper.dart';
 import 'package:fly_todo/models/tokens.dart';
+import 'package:fly_todo/models/user.dart';
 import 'package:fly_todo/repositories/datastore_repository.dart';
 import 'package:http/http.dart' as http;
 
@@ -57,8 +58,16 @@ abstract class RequestHelper {
     throw Exception(ErrorHelper.getErrorMessage(response.body));
   }
 
-  static Future<Map<String, String>> getHeaders({doAuth = true, isJson}) async {
+  static Future<Map<String, String>> getHeaders({
+    doAuth = true,
+    addNameHeader = false,
+    isJson,
+  }) async {
     final Map<String, String> headers = {};
+    if (addNameHeader) {
+      User user = await _datastoreRepository.getUser();
+      headers['name'] = user.name;
+    }
 
     if (isJson) {
       headers['Content-Type'] = 'application/json';
@@ -68,6 +77,7 @@ abstract class RequestHelper {
       Tokens tokens = await _datastoreRepository.getTokens();
       headers['Authorization'] = 'Bearer ${tokens.access}';
     }
+
     return headers;
   }
 }

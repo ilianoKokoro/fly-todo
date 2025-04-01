@@ -86,7 +86,7 @@ class UserRepository {
 
     async validateRefreshToken(uuid, headerName) {
         try {
-            const user = await User.findOne({ name: uuid });
+            const user = await User.findOne({ uuid: uuid });
 
             if (!user) {
                 throw HttpErrors.NotFound("User not found.");

@@ -26,7 +26,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await getTasks();
+      // await getTasks();
+      widget.authRepository.refreshAccessToken();
     });
   }
 
@@ -46,53 +47,38 @@ class _HomeScreenState extends State<HomeScreen> {
         _loading = false;
       });
     } catch (_) {
-      _logOut(serverSide: false);
+      _returnToAuth();
     }
   }
 
-  void _logOut({bool serverSide = true}) {
-    print("_logOut");
-    print(serverSide);
+  void _returnToAuth({showMessage = false}) {
+    widget.datastoreRepository.clearDatastore();
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => AuthScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+        transitionDuration: Duration(milliseconds: Transitions.duration),
+      ),
+    );
+
+    if (showMessage) {
+      Modal.showInfo("Log out successful", "Successfully logged out", context);
+    }
+  }
+
+  void _logOut() {
     setState(() {
       _loading = true;
     });
 
     try {
-      try {
-        if (serverSide) {
-          widget.authRepository.logOut();
-        }
-      } catch (_) {
-      } finally {
-        widget.datastoreRepository.clearDatastore();
-        Navigator.pushReplacement(
-          context,
-          PageRouteBuilder(
-            pageBuilder:
-                (context, animation, secondaryAnimation) => AuthScreen(),
-            transitionsBuilder: (
-              context,
-              animation,
-              secondaryAnimation,
-              child,
-            ) {
-              return FadeTransition(opacity: animation, child: child);
-            },
-            transitionDuration: Duration(milliseconds: Transitions.duration),
-          ),
-        );
-        if (serverSide) {
-          Modal.showInfo(
-            "Log out successful",
-            "Successfully logged out",
-            context,
-          );
-        }
-      }
-    } on Exception catch (err) {
-      if (context.mounted) {
-        Modal.showError(err, context);
-      }
+      widget.authRepository.logOut();
+    } catch (_) {
+    } finally {
+      _returnToAuth();
     }
   }
 

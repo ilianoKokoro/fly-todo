@@ -6,13 +6,21 @@ import 'package:fly_todo/models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DatastoreRepository {
+  Future<SharedPreferencesWithCache> getInstance() async {
+    return await SharedPreferencesWithCache.create(
+      cacheOptions: const SharedPreferencesWithCacheOptions(
+        allowList: <String>{Datastore.jwt, Datastore.user},
+      ),
+    );
+  }
+
   void saveUser(User user) async {
-    final preferences = await SharedPreferences.getInstance();
+    final preferences = await getInstance();
     await preferences.setString(Datastore.user, user.toJsonString());
   }
 
   Future<User> getUser() async {
-    final preferences = await SharedPreferences.getInstance();
+    final preferences = await getInstance();
 
     String? user = preferences.getString(Datastore.user);
 
@@ -24,12 +32,12 @@ class DatastoreRepository {
   }
 
   void saveTokens(Tokens tokens) async {
-    final preferences = await SharedPreferences.getInstance();
+    final preferences = await getInstance();
     await preferences.setString(Datastore.jwt, jsonEncode(tokens.toJson()));
   }
 
   Future<Tokens> getTokens() async {
-    final preferences = await SharedPreferences.getInstance();
+    final preferences = await getInstance();
 
     String? tokens = preferences.getString(Datastore.jwt);
 
@@ -41,17 +49,17 @@ class DatastoreRepository {
   }
 
   void clearTokens() async {
-    final preferences = await SharedPreferences.getInstance();
+    final preferences = await getInstance();
     await preferences.remove(Datastore.jwt);
   }
 
   void clearUser() async {
-    final preferences = await SharedPreferences.getInstance();
+    final preferences = await getInstance();
     await preferences.remove(Datastore.user);
   }
 
   void clearDatastore() async {
-    final preferences = await SharedPreferences.getInstance();
+    final preferences = await getInstance();
     preferences.clear();
   }
 }

@@ -25,16 +25,20 @@ class _TaskRowState extends State<TaskRow> {
   }
 
   void _onTextChanged(String newValue) {
-    widget.task.name = newValue;
+    setState(() {
+      widget.task.name = newValue;
+    });
+    _updateTask();
+  }
+
+  void _updateTask() {
     if (_debounce?.isActive ?? false) _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: App.debounceMs), () {
-      setState(() {
-        try {
-          widget.task.update();
-        } on Exception catch (err) {
-          Modal.showError(err, context);
-        }
-      });
+      try {
+        widget.task.update();
+      } on Exception catch (err) {
+        Modal.showError(err, context);
+      }
     });
   }
 

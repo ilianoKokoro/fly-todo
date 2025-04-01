@@ -5,7 +5,21 @@ meta {
 }
 
 post {
-  url: https://fly-todo-api.vercel.appusers/actions/refresh
-  body: none
-  auth: inherit
+  url: https://fly-todo-api.vercel.app/users/actions/refresh
+  body: json
+  auth: bearer
+}
+
+headers {
+  name: asdf
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYXNkZiIsImlhdCI6MTc0MzUzMzU2MywiZXhwIjoxNzQzNTM1MzYzLCJpc3MiOiJodHRwczovL2ZseS10b2RvLWFwaS52ZXJjZWwuYXBwIn0.akq835mXqgLixdYuJnD8ZVj1jB6ZY-ZJOE9TZSaVC30
+}
+
+body:json {
+  {
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1dWlkIjoiYjFlMjQxYzgtYTVhYy00YjIzLWI5YjgtZDUwZjBjMDEyMmUwIiwiaWF0IjoxNzQzNTMzNTYzLCJleHAiOjE3NDQxMzgzNjMsImlzcyI6Imh0dHBzOi8vZmx5LXRvZG8tYXBpLnZlcmNlbC5hcHAifQ.Wuv6zBbf7YuxLA2rdgyQPLgQrr3KmevAwqi9l-GrBPQ"
+  }
 }

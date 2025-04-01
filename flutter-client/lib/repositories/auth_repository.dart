@@ -27,18 +27,9 @@ class AuthRepository {
     );
   }
 
-  void logOut() async {
+  Future<void> logOut() async {
     Tokens tokens = await _datastoreRepository.getTokens();
     final body = jsonEncode({"refreshToken": tokens.refresh});
     await RequestHelper.delete(Urls.logout, body);
-  }
-
-  void refreshAccessToken() async {
-    Tokens tokens = await _datastoreRepository.getTokens();
-    final body = jsonEncode({"refreshToken": tokens.refresh});
-    final responseBody = await RequestHelper.post(Urls.refresh, body);
-    _datastoreRepository.saveTokens(
-      Tokens.fromJson(jsonDecode(responseBody)["tokens"]),
-    );
   }
 }

@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:fly_todo/core/constants.dart';
 import 'package:fly_todo/core/error_helper.dart';
 import 'package:fly_todo/models/tokens.dart';
 import 'package:fly_todo/models/user.dart';
@@ -6,14 +9,16 @@ import 'package:http/http.dart' as http;
 
 abstract class RequestHelper {
   static final DatastoreRepository _datastoreRepository = DatastoreRepository();
+  static bool _isRefreshing = false;
 
   static Future<String> get(String href, {bool doAuth = true}) async {
-    final response = await http.get(
-      Uri.parse(href),
-      headers: await getHeaders(doAuth: doAuth, isJson: false),
+    return _makeRequest(
+      () async => http.get(
+        Uri.parse(href),
+        headers: await getHeaders(doAuth: doAuth, isJson: false),
+      ),
+      200,
     );
-
-    return handleResponse(response, 200);
   }
 
   static Future<String> post(
@@ -22,30 +27,78 @@ abstract class RequestHelper {
     bool doAuth = true,
     bool expectCreate = true,
   }) async {
-    final response = await http.post(
-      Uri.parse(href),
-      headers: await getHeaders(doAuth: doAuth, isJson: true),
-      body: body,
+    return _makeRequest(
+      () async => http.post(
+        Uri.parse(href),
+        headers: await getHeaders(doAuth: doAuth, isJson: true),
+        body: body,
+      ),
+      expectCreate ? 201 : 200,
     );
-    return handleResponse(response, expectCreate ? 201 : 200);
   }
 
   static Future<String> patch(String href, String body) async {
-    final response = await http.patch(
-      Uri.parse(href),
-      headers: await getHeaders(isJson: true),
-      body: body,
+    return _makeRequest(
+      () async => http.patch(
+        Uri.parse(href),
+        headers: await getHeaders(isJson: true),
+        body: body,
+      ),
+      200,
     );
-    return handleResponse(response, 200);
   }
 
   static Future<String> delete(String href, String body) async {
-    final response = await http.delete(
-      Uri.parse(href),
-      headers: await getHeaders(isJson: true),
-      body: body,
+    return _makeRequest(
+      () async => http.delete(
+        Uri.parse(href),
+        headers: await getHeaders(isJson: true),
+        body: body,
+      ),
+      204,
     );
-    return handleResponse(response, 204);
+  }
+
+  static Future<String> _makeRequest(
+    Future<http.Response> Function() requestFn,
+    int expectedCode, {
+    int retryCount = 0,
+  }) async {
+    try {
+      final response = await requestFn();
+
+      if (response.statusCode == 401 && retryCount == 0) {
+        final tokens = await _datastoreRepository.getTokens();
+        if (tokens.refresh.isNotEmpty) {
+          await _refreshTokens();
+          return _makeRequest(
+            requestFn,
+            expectedCode,
+            retryCount: retryCount + 1,
+          );
+        }
+      }
+
+      return handleResponse(response, expectedCode);
+    } catch (e) {
+      throw Exception(ErrorHelper.getErrorMessage(e.toString()));
+    }
+  }
+
+  static Future<void> _refreshTokens() async {
+    if (_isRefreshing) return;
+
+    _isRefreshing = true;
+    try {
+      Tokens tokens = await _datastoreRepository.getTokens();
+      final body = jsonEncode({"refreshToken": tokens.refresh});
+      final responseBody = await post(Urls.refresh, body);
+      _datastoreRepository.saveTokens(
+        Tokens.fromJson(jsonDecode(responseBody)["tokens"]),
+      );
+    } finally {
+      _isRefreshing = false;
+    }
   }
 
   static String handleResponse(http.Response response, int expectedCode) {
@@ -59,9 +112,9 @@ abstract class RequestHelper {
   }
 
   static Future<Map<String, String>> getHeaders({
-    doAuth = true,
-    addNameHeader = false,
-    isJson,
+    bool doAuth = true,
+    bool addNameHeader = false,
+    bool isJson = false,
   }) async {
     final Map<String, String> headers = {};
     if (addNameHeader) {

@@ -6,15 +6,27 @@ import 'package:fly_todo/models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DatastoreRepository {
-  Future<SharedPreferencesWithCache> getInstance() async {
-    return await SharedPreferencesWithCache.create(
+  SharedPreferencesWithCache? controller;
+  bool _isInitialized = false;
+
+  Future<void> initialize() async {
+    controller = await SharedPreferencesWithCache.create(
       cacheOptions: const SharedPreferencesWithCacheOptions(
         allowList: <String>{Datastore.jwt, Datastore.user},
       ),
     );
   }
 
-  void saveUser(User user) async {
+  Future<SharedPreferencesWithCache> getInstance() async {
+    if (!_isInitialized) {
+      await initialize();
+      _isInitialized = true;
+    }
+
+    return controller!;
+  }
+
+  Future<void> saveUser(User user) async {
     final preferences = await getInstance();
     await preferences.setString(Datastore.user, user.toJsonString());
   }
@@ -31,7 +43,7 @@ class DatastoreRepository {
     return User.fromJson(jsonDecode(user));
   }
 
-  void saveTokens(Tokens tokens) async {
+  Future<void> saveTokens(Tokens tokens) async {
     final preferences = await getInstance();
     await preferences.setString(Datastore.jwt, jsonEncode(tokens.toJson()));
   }
@@ -48,17 +60,17 @@ class DatastoreRepository {
     return Tokens.fromJson(jsonDecode(tokens));
   }
 
-  void clearTokens() async {
+  Future<void> clearTokens() async {
     final preferences = await getInstance();
     await preferences.remove(Datastore.jwt);
   }
 
-  void clearUser() async {
+  Future<void> clearUser() async {
     final preferences = await getInstance();
     await preferences.remove(Datastore.user);
   }
 
-  void clearDatastore() async {
+  Future<void> clearDatastore() async {
     final preferences = await getInstance();
     preferences.clear();
   }

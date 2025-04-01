@@ -10,9 +10,10 @@ on:
 env:
     SUB_DIR: flutter-client
     ANDROID_TARGET_BINARY_NAME: android-fly-todo-release
-    WINDOWS_TARGET_BINARY_NAME: windows-fly-todo-release
-    ANDROID_APK_LOCATION: ./build/app/outputs/flutter-apk/app-release.apk
-    WINDOWS_BINARY_LOCATION: ./build/windows/x64/runner/Release/fly_todo.exe
+    WINDOWS_TARGET_BUNDLE_NAME: windows-fly-todo-release
+    ANDROID_APK_PATH: ./build/app/outputs/flutter-apk/app-release.apk
+    WINDOWS_BINARY_LOCATION: ./build/windows/x64/runner/Release/app-release.msixbundle
+    WINDOWS_BINARY_PATH: ./build/windows/x64/runner/Release/app-release.msixbundle
 
 name: Build the flutter binaries
 jobs:
@@ -35,7 +36,7 @@ jobs:
 
             - name: Rename APK
               working-directory: ${{env.SUB_DIR}}
-              run: mv ${{env.ANDROID_APK_LOCATION}} ./${{env.ANDROID_TARGET_BINARY_NAME}}.apk
+              run: mv ${{env.ANDROID_APK_PATH}} ./${{env.ANDROID_TARGET_BINARY_NAME}}.apk
 
             - name: Upload APK
               uses: actions/upload-artifact@v4
@@ -60,13 +61,17 @@ jobs:
               working-directory: ${{env.SUB_DIR}}
               run: flutter build windows
 
-            - name: Rename APK
-              working-directory: ${{env.SUB_DIR}}
-              run: mv ${{env.WINDOWS_BINARY_LOCATION}} ./${{env.WINDOWS_TARGET_BINARY_NAME}}.exe
+            - name: Make msixbundle
+              id: bundler
+              uses: LanceMcCarthy/Action-MsixBundler@v2.0.0
+              with:
+                  msix-folder: ${{env.WINDOWS_BINARY_PATH}}
+                  msixbundle-filepath: ${{env.WINDOWS_BINARY_LOCATION}}
+                  msixbundle-version: "0.0.1.0"
 
             - name: Upload binary
               uses: actions/upload-artifact@v4
               with:
-                  name: ${{env.WINDOWS_TARGET_BINARY_NAME}}
-                  path: ./${{env.SUB_DIR}}/${{env.WINDOWS_TARGET_BINARY_NAME}}.exe
+                  name: ${{env.WINDOWS_TARGET_BUNDLE_NAME}}
+                  path: ${{steps.bundler.outputs.msixbundle_path}}
                   if-no-files-found: error

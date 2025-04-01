@@ -9,8 +9,9 @@ on:
 
 env:
     SUB_DIR: flutter-client
-    ANDROID_TARGET_APK_NAME: fly-todo-release
-    ANDROID_APK_LOCATION: build\app\outputs\flutter-apk\app-release.apk
+    TARGET_BINARY_NAME: fly-todo-release
+    ANDROID_APK_LOCATION: build/app/outputs/flutter-apk/app-release.apk
+    WINDOWS_BINARY_LOCATION: build/windows/x64/runner/Release/fly_todo.exe
 
 name: Build the flutter binaries
 jobs:
@@ -47,11 +48,39 @@ jobs:
 
             - name: Rename APK
               working-directory: ${{env.SUB_DIR}}
-              run: mv ${{env.ANDROID_APK_LOCATION}} ./${{env.SUB_DIR}}/${{env.ANDROID_TARGET_APK_NAME}}.apk
+              run: mv ${{env.ANDROID_APK_LOCATION}} ./${{env.SUB_DIR}}/${{env.TARGET_BINARY_NAME}}.apk
 
             - name: Upload APK
               uses: actions/upload-artifact@v4
               with:
-                  name: ${{env.ANDROID_TARGET_APK_NAME}}
-                  path: ./${{env.SUB_DIR}}/${{env.ANDROID_TARGET_APK_NAME}}.apk
+                  name: ${{env.TARGET_BINARY_NAME}}
+                  path: ./${{env.SUB_DIR}}/${{env.TARGET_BINARY_NAME}}.apk
+                  if-no-files-found: error
+    build-windows-binary:
+        runs-on: windows-latest
+        name: build-windows-binary
+        needs: set-up-flutter
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Set up Flutter
+              uses: subosito/flutter-action@v2
+              with:
+                  channel: stable
+                  cache: true
+            - run: flutter --version
+
+            - name: Build binary
+              working-directory: ${{env.SUB_DIR}}
+              run: flutter build apk --release
+
+            - name: Rename binary
+              working-directory: ${{env.SUB_DIR}}
+              run: mv ${{env.WINDOWS_BINARY_LOCATION}} ./${{env.SUB_DIR}}/${{env.TARGET_BINARY_NAME}}.apk
+
+            - name: Upload binary
+              uses: actions/upload-artifact@v4
+              with:
+                  name: ${{env.TARGET_BINARY_NAME}}
+                  path: ./${{env.SUB_DIR}}/${{env.TARGET_BINARY_NAME}}.apk
                   if-no-files-found: error

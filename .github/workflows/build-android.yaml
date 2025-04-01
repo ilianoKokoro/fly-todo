@@ -2,6 +2,10 @@ on:
     push:
         branches:
             - prod
+        paths:
+            - "flutter-client/**"
+    workflow_dispatch:
+
 env:
     TARGET_APK_NAME: fly-todo-release
 
@@ -12,7 +16,7 @@ jobs:
         runs-on: ubuntu-latest
         container: ghcr.io/niklaslehnfeld/flutter-essentials-docker:master
         steps:
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@v4
             - uses: NiklasLehnfeld/flutter-android-build-action@v1
               id: android-build
               with:
@@ -23,12 +27,7 @@ jobs:
 
             - run: mv {{ steps.android-build.outputs.apk-path }} ./${{env.TARGET_APK_NAME}}.apk
             - name: Archive APK
-              uses: actions/upload-artifact@v2
+              uses: actions/upload-artifact@v4
               with:
                   name: release-apk
                   path: ./${{env.TARGET_APK_NAME}}.apk
-            # - name: Archive AAB
-            #   uses: actions/upload-artifact@v2
-            #   with:
-            #       name: release-aab
-            #       path: ${{ steps.android-build.outputs.aab-path }}

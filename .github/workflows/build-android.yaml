@@ -62,7 +62,7 @@ jobs:
 
             - name: Rename APK
               working-directory: ${{env.SUB_DIR}}
-              run: mv ${{env.ANDROID_APK_LOCATION}} ./${{env.WINDOWS_TARGET_BINARY_NAME}}.exe
+              run: mv ${{env.WINDOWS_BINARY_LOCATION}} ./${{env.WINDOWS_TARGET_BINARY_NAME}}.exe
 
             - name: Upload binary
               uses: actions/upload-artifact@v4

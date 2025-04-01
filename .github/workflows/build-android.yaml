@@ -7,27 +7,50 @@ on:
     workflow_dispatch:
 
 env:
-    TARGET_APK_NAME: fly-todo-release
+    SUB_DIR: flutter-client
+    ANDROID_TARGET_APK_NAME: fly-todo-release
+    ANDROID_APK_LOCATION: build\app\outputs\flutter-apk\app-release.apk
 
-name: Build Android APK
+name: Build the flutter binaries
 jobs:
-    android-release-build:
-        name: android-release-build
+    set-up-flutter:
         runs-on: ubuntu-latest
-        container: ghcr.io/niklaslehnfeld/flutter-essentials-docker:master
+        name: set-up-flutter
         steps:
             - uses: actions/checkout@v4
-            - uses: NiklasLehnfeld/flutter-android-build-action@v1
-              id: android-build
-              with:
-                  release: false
-                  #   keystore: ${{ secrets.KEYSTORE }}
-                  #   keystore-pwd: "${{ secrets.KEYSTORE_PASSWORD }}"
-                  #   key-pwd: "${{ secrets.KEY_PASSWORD }}"
 
-            - run: mv {{ steps.android-build.outputs.apk-path }} ./${{env.TARGET_APK_NAME}}.apk
-            - name: Archive APK
+            - name: Set up Flutter
+              uses: subosito/flutter-action@v2
+              with:
+                  channel: stable
+                  cache: true
+            - run: flutter --version
+
+    build-android-apk:
+        runs-on: ubuntu-latest
+        name: build-android-apk
+        needs: set-up-flutter
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Set up Flutter
+              uses: subosito/flutter-action@v2
+              with:
+                  channel: stable
+                  cache: true
+            - run: flutter --version
+
+            - name: Build APK
+              working-directory: ${{env.SUB_DIR}}
+              run: flutter build apk --release
+
+            - name: Rename APK
+              working-directory: ${{env.SUB_DIR}}
+              run: mv ${{env.ANDROID_APK_LOCATION}} ./${{env.SUB_DIR}}/${{env.ANDROID_TARGET_APK_NAME}}.apk
+
+            - name: Upload APK
               uses: actions/upload-artifact@v4
               with:
-                  name: release-apk
-                  path: ./${{env.TARGET_APK_NAME}}.apk
+                  name: ${{env.ANDROID_TARGET_APK_NAME}}
+                  path: ./${{env.SUB_DIR}}/${{env.ANDROID_TARGET_APK_NAME}}.apk
+                  if-no-files-found: error

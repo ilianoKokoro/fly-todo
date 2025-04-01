@@ -80,7 +80,8 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(App.title)),
+      appBar: AppBar(title: const Text(App.title), centerTitle: true),
+
       body: Center(
         child: ConstrainedBox(
           constraints: BoxConstraints(maxWidth: 500),

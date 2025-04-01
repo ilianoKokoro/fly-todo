@@ -51,6 +51,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _logOut({bool serverSide = true}) {
+    print("_logOut");
+    print(serverSide);
     setState(() {
       _loading = true;
     });
@@ -60,6 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if (serverSide) {
           widget.authRepository.logOut();
         }
+      } catch (_) {
       } finally {
         widget.datastoreRepository.clearDatastore();
         Navigator.pushReplacement(
@@ -103,6 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
             _logOut();
           },
         ),
+        centerTitle: true,
         title: const Text(App.title),
       ),
       body: Center(

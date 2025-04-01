@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:fly_todo/repositories/task_repository.dart';
 
 class Task {
@@ -12,11 +14,11 @@ class Task {
       isCompleted = json['isCompleted'] as bool,
       href = json['href'] as String;
 
-  Map<String, dynamic> toJson() => {
+  String toJsonString() => jsonEncode({
     'name': name,
-    'isCompleted': isCompleted,
+    'isCompleted': isCompleted.toString(),
     "href": href,
-  };
+  });
 
   void update() async {
     final TaskRepository taskRepository = TaskRepository();

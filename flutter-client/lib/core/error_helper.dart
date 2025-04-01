@@ -29,8 +29,8 @@ class ErrorHelper {
         return jsonObject['message'].toString();
       }
 
-      //  print(jsonString);
       return "Unknown error";
+      //  return jsonString;
     } on Exception catch (ex) {
       return ex.getMessage;
     }

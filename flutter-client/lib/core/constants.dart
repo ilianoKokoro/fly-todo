@@ -22,4 +22,5 @@ class Transitions {
 class App {
   static const String title = "Fly TODO";
   static const Color fallbackPrimary = Colors.blue;
+  static const int debounceMs = 300;
 }

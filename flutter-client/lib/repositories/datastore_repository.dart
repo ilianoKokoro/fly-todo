@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class DatastoreRepository {
   void saveUser(User user) async {
     final preferences = await SharedPreferences.getInstance();
-    await preferences.setString(Datastore.user, jsonEncode(user.toJson()));
+    await preferences.setString(Datastore.user, user.toJsonString());
   }
 
   Future<User> getUser() async {

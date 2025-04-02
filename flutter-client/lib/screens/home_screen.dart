@@ -94,17 +94,25 @@ class _HomeScreenState extends State<HomeScreen> {
         centerTitle: true,
         title: const Text(App.title),
       ),
-      body: Center(
-        child:
-            _loading
-                ? CircularProgressIndicator()
-                : _tasks.isEmpty
-                ? Text("No tasks created")
-                : SingleChildScrollView(
-                  child: Column(
-                    children: [..._tasks.map((model) => TaskRow(task: model))],
+      body: Container(
+        padding: EdgeInsets.all(20),
+        child: Center(
+          child:
+              _loading
+                  ? CircularProgressIndicator()
+                  : _tasks.isEmpty
+                  ? Text("No tasks created")
+                  : SingleChildScrollView(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: 800),
+                      child: Column(
+                        children: [
+                          ..._tasks.map((model) => TaskRow(task: model)),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
+        ),
       ),
     );
   }

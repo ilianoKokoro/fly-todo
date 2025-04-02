@@ -6,10 +6,36 @@ A simple cross-platform material design TODO app made with Flutter.
 
 ### Requirements
 
+#### Flutter client
+
 -   [Flutter SDK](https://docs.flutter.dev/get-started/install)
 -   A device to test the app on (Web, Android or Windows)
 
+#### Node server
+
+-   Node (LTS)
+-   NPM
+
 ### Commands
 
-Starting the application in dev mode :
-`flutter run ./lib/main.dart`
+#### Flutter client
+
+Starting the Flutter client in dev mode :
+
+```
+flutter run ./lib/main.dart
+```
+
+#### Node server
+
+Setting up the dependencies :
+
+```
+npm i
+```
+
+Starting the node server in dev mode :
+
+```
+npm run dev
+```

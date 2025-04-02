@@ -12,6 +12,7 @@ dependencies:
     flutter:
         sdk: flutter
     http: ^1.3.0
+    msix: ^3.16.8
     shared_preferences: ^2.5.3
 
 dev_dependencies:
@@ -21,3 +22,12 @@ dev_dependencies:
 
 flutter:
     uses-material-design: true
+
+msix_config:
+    display_name: Fly TODO
+    publisher_display_name: Ilian Delagrange
+    identity_name: com.FlyToDo
+    msix_version: 0.0.1.0
+    logo_path: web/icons/icon-512.png
+    capabilities: internetClient
+    architecture: x64

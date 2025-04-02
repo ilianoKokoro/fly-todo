@@ -12,8 +12,7 @@ env:
     ANDROID_TARGET_BINARY_NAME: android-fly-todo-release
     WINDOWS_TARGET_BUNDLE_NAME: windows-fly-todo-release
     ANDROID_APK_PATH: ./build/app/outputs/flutter-apk/app-release.apk
-    WINDOWS_BINARY_LOCATION: build/windows/x64/runner/Release/app-release.msixbundle
-    WINDOWS_BINARY_PATH: build/windows/x64/runner/Release/
+    WINDOWS_BINARY_LOCATION: build/windows/x64/runner/Release/fly_todo.msix
 
 name: Build the flutter binaries
 jobs:
@@ -61,17 +60,16 @@ jobs:
               working-directory: ${{env.SUB_DIR}}
               run: flutter build windows
 
-            - name: Make msixbundle
-              id: bundler
-              uses: LanceMcCarthy/Action-MsixBundler@v2.0.0
-              with:
-                  msix-folder: /${{env.SUB_DIR}}/${{env.WINDOWS_BINARY_PATH}}
-                  msixbundle-filepath: /${{env.SUB_DIR}}/${{env.WINDOWS_BINARY_LOCATION}}
-                  msixbundle-version: "0.0.1.0"
+            - name: Generate MSIX
+              run: dart run msix:create
+
+            - name: Rename APK
+              working-directory: ${{env.SUB_DIR}}
+              run: mv ${{env.WINDOWS_BINARY_LOCATION}} ./${{env.ANDROID_TARGET_BINARY_NAME}}.msix
 
             - name: Upload binary
               uses: actions/upload-artifact@v4
               with:
                   name: ${{env.WINDOWS_TARGET_BUNDLE_NAME}}
-                  path: ${{steps.bundler.outputs.msixbundle_path}}
+                  path: ./${{env.SUB_DIR}}/${{env.ANDROID_TARGET_BINARY_NAME}}.msix
                   if-no-files-found: error

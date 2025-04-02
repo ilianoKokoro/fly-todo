@@ -26,11 +26,16 @@ abstract class RequestHelper {
     String body, {
     bool doAuth = true,
     bool expectCreate = true,
+    bool addNameHeader = false,
   }) async {
     return _makeRequest(
       () async => http.post(
         Uri.parse(href),
-        headers: await getHeaders(doAuth: doAuth, isJson: true),
+        headers: await getHeaders(
+          doAuth: doAuth,
+          isJson: true,
+          addNameHeader: addNameHeader,
+        ),
         body: body,
       ),
       expectCreate ? 201 : 200,
@@ -92,7 +97,7 @@ abstract class RequestHelper {
     try {
       Tokens tokens = await _datastoreRepository.getTokens();
       final body = jsonEncode({"refreshToken": tokens.refresh});
-      final responseBody = await post(Urls.refresh, body);
+      final responseBody = await post(Urls.refresh, body, addNameHeader: true);
       _datastoreRepository.saveTokens(
         Tokens.fromJson(jsonDecode(responseBody)["tokens"]),
       );

@@ -6,6 +6,20 @@ meta {
 
 post {
   url: http://localhost:7187/users/actions/refresh
-  body: none
-  auth: inherit
+  body: json
+  auth: bearer
+}
+
+headers {
+  name: asdf
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYXNkZiIsImlhdCI6MTc0MzYwMTE5MiwiZXhwIjoxNzQzNjAxMjUyLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjcxODcifQ.6eTIu2YYiJS5-HU4vFbj0IbKeo0pgw-XGYFxBCgh-aQ
+}
+
+body:json {
+  {
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1dWlkIjoiYjFlMjQxYzgtYTVhYy00YjIzLWI5YjgtZDUwZjBjMDEyMmUwIiwiaWF0IjoxNzQzNjAxMTkyLCJleHAiOjE3NDQyMDU5OTIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NzE4NyJ9.TT5UXsZJl1pJOsVQSZgRT4BJdrBDRwd9vG2WWNpr684"
+  }
 }

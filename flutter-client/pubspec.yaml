@@ -1,5 +1,5 @@
 name: fly_todo
-description: "A simple TODO app made with flutter."
+description: "A simple cross-platform material design TODO app made with Flutter."
 publish_to: "none"
 version: 0.1.0
 

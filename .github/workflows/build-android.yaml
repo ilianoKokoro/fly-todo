@@ -61,6 +61,7 @@ jobs:
               run: flutter build windows
 
             - name: Generate MSIX
+              working-directory: ${{env.SUB_DIR}}
               run: dart run msix:create
 
             - name: Rename APK

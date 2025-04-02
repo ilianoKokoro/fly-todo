@@ -69,25 +69,21 @@ abstract class RequestHelper {
     int expectedCode, {
     int retryCount = 0,
   }) async {
-    try {
-      final response = await requestFn();
+    final response = await requestFn();
 
-      if (response.statusCode == 401 && retryCount == 0) {
-        final tokens = await _datastoreRepository.getTokens();
-        if (tokens.refresh.isNotEmpty) {
-          await _refreshTokens();
-          return _makeRequest(
-            requestFn,
-            expectedCode,
-            retryCount: retryCount + 1,
-          );
-        }
+    if (response.statusCode == 401 && retryCount == 0) {
+      final tokens = await _datastoreRepository.getTokens();
+      if (tokens.refresh.isNotEmpty) {
+        await _refreshTokens();
+        return _makeRequest(
+          requestFn,
+          expectedCode,
+          retryCount: retryCount + 1,
+        );
       }
-
-      return handleResponse(response, expectedCode);
-    } catch (e) {
-      throw Exception(ErrorHelper.getErrorMessage(e.toString()));
     }
+
+    return handleResponse(response, expectedCode);
   }
 
   static Future<void> _refreshTokens() async {

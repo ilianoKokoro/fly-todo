@@ -50,9 +50,26 @@ class _TaskRowState extends State<TaskRow> {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: _controller,
-      onChanged: (value) => {_onTextChanged(value)},
+    return Row(
+      children: [
+        Checkbox(
+          shape: CircleBorder(),
+          value: widget.task.isCompleted,
+          onChanged: (bool? value) {
+            setState(() {
+              widget.task.isCompleted = value ?? false;
+            });
+            _updateTask();
+          },
+        ),
+        Expanded(
+          child: TextField(
+            controller: _controller,
+            onChanged: (value) => {_onTextChanged(value)},
+            enabled: true,
+          ),
+        ),
+      ],
     );
   }
 }

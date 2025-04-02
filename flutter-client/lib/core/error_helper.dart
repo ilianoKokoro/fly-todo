@@ -20,7 +20,6 @@ class ErrorHelper {
           return firstError.toString();
         }
       }
-
       if (jsonObject.containsKey('userMessage')) {
         return jsonObject['userMessage'].toString();
       }
@@ -30,7 +29,7 @@ class ErrorHelper {
       }
 
       return "Unknown error";
-      //  return jsonString;
+      // return jsonString;
     } on Exception catch (ex) {
       return ex.getMessage;
     }

@@ -56,14 +56,9 @@ jobs:
                   cache: true
             - run: flutter --version
 
-            - name: Build binary
-              working-directory: ${{env.SUB_DIR}}
-              run: flutter build windows
-
             - name: Generate MSIX
               working-directory: ${{env.SUB_DIR}}
-              run: dart run msix:create
-
+              run: dart run msix:create --install-certificate false
             - name: Rename APK
               working-directory: ${{env.SUB_DIR}}
               run: mv ${{env.WINDOWS_BINARY_LOCATION}} ./${{env.ANDROID_TARGET_BINARY_NAME}}.msix

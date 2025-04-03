@@ -25,7 +25,7 @@ class TextInputWithPadding extends StatelessWidget {
       child: TextField(
         enabled: enabled,
         decoration: InputDecoration(
-          border: OutlineInputBorder(),
+          border: const OutlineInputBorder(),
           hintText: placeholder,
         ),
         onChanged: (value) => onChanged(value),

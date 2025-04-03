@@ -14,9 +14,11 @@ class TaskRow extends StatefulWidget {
   State<TaskRow> createState() => _TaskRowState();
 }
 
-class _TaskRowState extends State<TaskRow> {
-  TextEditingController _controller = TextEditingController();
+class _TaskRowState extends State<TaskRow> with AutomaticKeepAliveClientMixin {
   Timer? _debounce;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void dispose() {
@@ -41,13 +43,8 @@ class _TaskRowState extends State<TaskRow> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    _controller = TextEditingController(text: widget.task.name);
-  }
-
-  @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Row(
       children: [
         Checkbox(
@@ -56,8 +53,8 @@ class _TaskRowState extends State<TaskRow> {
           onChanged: (value) => {_updateTask(isCompleted: value ?? false)},
         ),
         Expanded(
-          child: TextField(
-            controller: _controller,
+          child: TextFormField(
+            initialValue: widget.task.name,
             onChanged: (value) => {_updateTask(name: value)},
             enabled: true,
           ),

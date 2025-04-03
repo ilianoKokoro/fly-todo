@@ -18,18 +18,22 @@ class TaskColumn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
+      padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
       child: Center(
         child:
             loading
                 ? CircularProgressIndicator()
                 : tasks.isEmpty
-                ? Text("No tasks to show")
+                ? const Text("No tasks to show")
                 : ConstrainedBox(
                   constraints: BoxConstraints(maxWidth: 800),
                   child: ListView.builder(
                     itemCount: tasks.length,
                     cacheExtent: 1000,
+                    prototypeItem: TaskRow(
+                      task: tasks.first,
+                      onUpdate: onUpdate,
+                    ),
                     itemBuilder: (context, index) {
                       final task = tasks[index];
                       return TaskRow(task: task, onUpdate: onUpdate);

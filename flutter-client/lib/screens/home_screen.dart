@@ -112,6 +112,17 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Future<void> _onTaskDelete(Task taskToDelete) async {
+    try {
+      setState(() {
+        _tasks.remove(taskToDelete);
+      });
+      await taskToDelete.delete();
+    } on Exception catch (err) {
+      Modal.showError(err, context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -131,7 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: const Icon(Icons.add),
       ),
       body: DefaultTabController(
-        initialIndex: 1,
+        initialIndex: 0,
         length: 2,
         child: Scaffold(
           appBar: AppBar(
@@ -147,12 +158,14 @@ class _HomeScreenState extends State<HomeScreen> {
             children: <Widget>[
               TaskColumn(
                 tasks: _tasks.where((model) => !model.isCompleted).toList(),
+                onDelete: _onTaskDelete,
                 onUpdate: _onTaskUpdate,
                 loading: _loading,
               ),
               TaskColumn(
                 tasks: _tasks,
                 onUpdate: _onTaskUpdate,
+                onDelete: _onTaskDelete,
                 loading: _loading,
               ),
             ],

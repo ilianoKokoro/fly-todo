@@ -19,6 +19,11 @@ class Task {
       isCompleted = json['isCompleted'] as bool,
       href = json['href'] as String;
 
+  @override
+  String toString() {
+    return toJsonString();
+  }
+
   String toJsonString() => jsonEncode({
     'name': name,
     'isCompleted': isCompleted.toString(),

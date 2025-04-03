@@ -11,9 +11,11 @@ class TaskColumn extends StatelessWidget {
     super.key,
     required this.onUpdate,
     required this.loading,
+    required this.onDelete,
   });
 
   final Function(Task) onUpdate;
+  final Function(Task) onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -32,11 +34,16 @@ class TaskColumn extends StatelessWidget {
                     cacheExtent: 1000,
                     prototypeItem: TaskRow(
                       task: tasks.first,
+                      onDelete: onDelete,
                       onUpdate: onUpdate,
                     ),
                     itemBuilder: (context, index) {
                       final task = tasks[index];
-                      return TaskRow(task: task, onUpdate: onUpdate);
+                      return TaskRow(
+                        task: task,
+                        onUpdate: onUpdate,
+                        onDelete: onDelete,
+                      );
                     },
                   ),
                 ),

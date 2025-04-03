@@ -94,6 +94,12 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void _onTaskUpdate(Task task) {
+    setState(() {
+      task.update();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -127,7 +133,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           ..._tasks
                               .where((model) => !model.isCompleted)
-                              .map((model) => TaskRow(task: model)),
+                              .map(
+                                (model) => TaskRow(
+                                  task: model,
+                                  onUpdate: _onTaskUpdate,
+                                ),
+                              ),
                         ],
                       ),
                     ),

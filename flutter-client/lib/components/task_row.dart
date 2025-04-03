@@ -6,9 +6,10 @@ import 'package:fly_todo/core/modal.dart';
 import 'package:fly_todo/models/task.dart';
 
 class TaskRow extends StatefulWidget {
-  const TaskRow({super.key, required this.task});
+  const TaskRow({super.key, required this.task, required this.onUpdate});
 
   final Task task;
+  final Function(Task) onUpdate;
 
   @override
   State<TaskRow> createState() => _TaskRowState();
@@ -31,11 +32,18 @@ class _TaskRowState extends State<TaskRow> {
     _updateTask();
   }
 
+  void _onStatusChanged(bool? newValue) {
+    setState(() {
+      widget.task.isCompleted = newValue ?? false;
+    });
+    _updateTask();
+  }
+
   void _updateTask() {
     if (_debounce?.isActive ?? false) _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: App.debounceMs), () {
       try {
-        widget.task.update();
+        widget.onUpdate(widget.task);
       } on Exception catch (err) {
         Modal.showError(err, context);
       }
@@ -55,12 +63,7 @@ class _TaskRowState extends State<TaskRow> {
         Checkbox(
           shape: CircleBorder(),
           value: widget.task.isCompleted,
-          onChanged: (bool? value) {
-            setState(() {
-              widget.task.isCompleted = value ?? false;
-            });
-            _updateTask();
-          },
+          onChanged: (value) => {_onStatusChanged(value)},
         ),
         Expanded(
           child: TextField(

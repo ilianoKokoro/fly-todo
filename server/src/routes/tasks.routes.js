@@ -57,7 +57,7 @@ class TaskRouter {
             }
 
             await tasksRepository.delete(taskId);
-            res.status(200).json();
+            res.status(204).json();
         } catch (err) {
             return next(err);
         }

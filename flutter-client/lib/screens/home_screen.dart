@@ -6,7 +6,6 @@ import 'package:fly_todo/models/task.dart';
 import 'package:fly_todo/models/user.dart';
 import 'package:fly_todo/repositories/auth_repository.dart';
 import 'package:fly_todo/repositories/datastore_repository.dart';
-import 'package:fly_todo/repositories/task_repository.dart';
 import 'package:fly_todo/screens/auth_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -19,11 +18,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final DatastoreRepository _datastoreRepository = DatastoreRepository();
   final AuthRepository _authRepository = AuthRepository();
-  final TaskRepository _taskRepository = TaskRepository();
 
   List<Task> _tasks = [];
   bool _loading = false;
-  bool _floatingButtonLoading = false;
 
   @override
   void initState() {
@@ -85,14 +82,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _createTask() async {
-    if (_floatingButtonLoading == true) {
-      return;
-    }
     try {
-      setState(() {
-        _floatingButtonLoading = true;
-      });
-      Task newTask = await _taskRepository.createTask();
+      Task newTask = await Task.create();
       setState(() {
         _tasks.add(newTask);
       });
@@ -100,10 +91,6 @@ class _HomeScreenState extends State<HomeScreen> {
       if (context.mounted) {
         Modal.showError(err, context);
       }
-    } finally {
-      setState(() {
-        _floatingButtonLoading = false;
-      });
     }
   }
 
@@ -123,12 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async => {_createTask()},
         enableFeedback: true,
-        child:
-            _floatingButtonLoading
-                ? CircularProgressIndicator(
-                  constraints: BoxConstraints(maxHeight: 10, maxWidth: 10),
-                )
-                : const Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
       body: Container(
         padding: EdgeInsets.all(20),

@@ -6,14 +6,14 @@ import 'package:fly_todo/repositories/task_repository.dart';
 class User {
   User(this.name, this.email, this.href);
 
+  static final TaskRepository _taskRepository = TaskRepository();
+
   String name;
   String email;
   String href;
 
   Future<List<Task>> getTasks() async {
-    final TaskRepository taskRepository = TaskRepository();
-
-    return await taskRepository.getUserTasks(this);
+    return await _taskRepository.getUserTasks(this);
   }
 
   User.fromJson(Map<String, dynamic> json)

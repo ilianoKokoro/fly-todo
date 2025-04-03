@@ -30,6 +30,6 @@ class AuthRepository {
   Future<void> logOut() async {
     Tokens tokens = await _datastoreRepository.getTokens();
     final body = jsonEncode({"refreshToken": tokens.refresh});
-    await RequestHelper.delete(Urls.logout, body);
+    await RequestHelper.delete(Urls.logout, body: body);
   }
 }

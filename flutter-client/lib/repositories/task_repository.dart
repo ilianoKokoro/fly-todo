@@ -31,4 +31,9 @@ class TaskRepository {
     );
     return Task.fromJson(json.decode(responseBody));
   }
+
+  Future<void> deleteTask(Task task) async {
+    String _ = await RequestHelper.delete(task.href);
+    return;
+  }
 }

@@ -53,7 +53,7 @@ abstract class RequestHelper {
     );
   }
 
-  static Future<String> delete(String href, String body) async {
+  static Future<String> delete(String href, {String? body}) async {
     return _makeRequest(
       () async => http.delete(
         Uri.parse(href),

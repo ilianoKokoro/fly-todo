@@ -4,8 +4,8 @@ import 'package:fly_todo/core/extensions.dart';
 
 class ErrorHelper {
   static String getErrorMessage(String jsonString) {
-    final jsonObject = jsonDecode(jsonString);
     try {
+      final jsonObject = jsonDecode(jsonString);
       if (jsonObject.containsKey('errors')) {
         final errors = jsonObject['errors'];
 

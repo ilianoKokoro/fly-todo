@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:fly_todo/core/constants.dart';
-import 'package:fly_todo/core/modal.dart';
 import 'package:fly_todo/models/task.dart';
 
 class TaskRow extends StatefulWidget {
@@ -25,29 +24,20 @@ class _TaskRowState extends State<TaskRow> {
     super.dispose();
   }
 
-  void _onTextChanged(String newValue) {
+  void _updateTask({String? name, bool? isCompleted}) {
     setState(() {
-      widget.task.name = newValue;
+      widget.task.name = name ?? widget.task.name;
+      widget.task.isCompleted = isCompleted ?? widget.task.isCompleted;
     });
-    _updateTask();
-  }
 
-  void _onStatusChanged(bool? newValue) {
-    setState(() {
-      widget.task.isCompleted = newValue ?? false;
-    });
-    _updateTask();
-  }
-
-  void _updateTask() {
-    if (_debounce?.isActive ?? false) _debounce?.cancel();
-    _debounce = Timer(const Duration(milliseconds: App.debounceMs), () {
-      try {
+    if (name != null) {
+      if (_debounce?.isActive ?? false) _debounce?.cancel();
+      _debounce = Timer(const Duration(milliseconds: App.debounceMs), () {
         widget.onUpdate(widget.task);
-      } on Exception catch (err) {
-        Modal.showError(err, context);
-      }
-    });
+      });
+    } else {
+      widget.onUpdate(widget.task);
+    }
   }
 
   @override
@@ -63,12 +53,12 @@ class _TaskRowState extends State<TaskRow> {
         Checkbox(
           shape: CircleBorder(),
           value: widget.task.isCompleted,
-          onChanged: (value) => {_onStatusChanged(value)},
+          onChanged: (value) => {_updateTask(isCompleted: value ?? false)},
         ),
         Expanded(
           child: TextField(
             controller: _controller,
-            onChanged: (value) => {_onTextChanged(value)},
+            onChanged: (value) => {_updateTask(name: value)},
             enabled: true,
           ),
         ),

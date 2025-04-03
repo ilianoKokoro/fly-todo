@@ -20,9 +20,6 @@ dev_dependencies:
     flutter_lints: ^5.0.0
     msix: ^3.16.8
 
-flutter:
-    uses-material-design: true
-
 msix_config:
     display_name: Fly TODO
     publisher_display_name: Ilian Delagrange
@@ -31,3 +28,6 @@ msix_config:
     logo_path: web/icons/icon-512.png
     capabilities: internetClient
     architecture: x64
+
+flutter:
+    uses-material-design: true

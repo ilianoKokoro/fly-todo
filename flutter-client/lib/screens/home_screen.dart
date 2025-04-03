@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fly_todo/components/task_row.dart';
+import 'package:fly_todo/components/task_column.dart';
 import 'package:fly_todo/core/modal.dart';
 import 'package:fly_todo/core/constants.dart';
 import 'package:fly_todo/models/task.dart';
@@ -68,14 +68,17 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void _logOut() {
+  void _logOut() async {
     setState(() {
       _loading = true;
     });
 
     try {
-      _authRepository.logOut();
-    } catch (_) {
+      await _authRepository.logOut();
+    } on Exception catch (err) {
+      if (context.mounted) {
+        Modal.showError(err, context);
+      }
     } finally {
       _returnToAuth();
     }
@@ -94,10 +97,19 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void _onTaskUpdate(Task task) {
-    setState(() {
-      task.update();
-    });
+  Future<void> _onTaskUpdate(Task updatedTask) async {
+    try {
+      await updatedTask.update();
+
+      int index = _tasks.indexWhere((item) => item.href == updatedTask.href);
+      if (index != -1) {
+        setState(() {
+          _tasks[index] = updatedTask;
+        });
+      }
+    } on Exception catch (err) {
+      Modal.showError(err, context);
+    }
   }
 
   @override
@@ -118,31 +130,33 @@ class _HomeScreenState extends State<HomeScreen> {
         enableFeedback: true,
         child: const Icon(Icons.add),
       ),
-      body: Container(
-        padding: EdgeInsets.all(20),
-        child: Center(
-          child:
-              _loading
-                  ? CircularProgressIndicator()
-                  : _tasks.isEmpty
-                  ? Text("No tasks created")
-                  : SingleChildScrollView(
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(maxWidth: 800),
-                      child: Column(
-                        children: [
-                          ..._tasks
-                              .where((model) => !model.isCompleted)
-                              .map(
-                                (model) => TaskRow(
-                                  task: model,
-                                  onUpdate: _onTaskUpdate,
-                                ),
-                              ),
-                        ],
-                      ),
-                    ),
-                  ),
+      body: DefaultTabController(
+        initialIndex: 1,
+        length: 2,
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text('TabBar Sample'),
+            bottom: const TabBar(
+              tabs: <Widget>[
+                Tab(icon: Text("Tasks TODO")),
+                Tab(icon: Text("All tasks")),
+              ],
+            ),
+          ),
+          body: TabBarView(
+            children: <Widget>[
+              TaskColumn(
+                tasks: _tasks.where((model) => !model.isCompleted).toList(),
+                onUpdate: _onTaskUpdate,
+                loading: _loading,
+              ),
+              TaskColumn(
+                tasks: _tasks,
+                onUpdate: _onTaskUpdate,
+                loading: _loading,
+              ),
+            ],
+          ),
         ),
       ),
     );

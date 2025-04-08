@@ -1,7 +1,4 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:fly_todo/core/constants.dart';
 import 'package:fly_todo/models/task.dart';
 
 class TaskRow extends StatefulWidget {
@@ -21,31 +18,17 @@ class TaskRow extends StatefulWidget {
 }
 
 class _TaskRowState extends State<TaskRow> with AutomaticKeepAliveClientMixin {
-  Timer? _debounce;
-
   @override
   bool get wantKeepAlive => true;
 
-  @override
-  void dispose() {
-    _debounce?.cancel();
-    super.dispose();
-  }
-
   void _updateTask({String? name, bool? isCompleted}) {
-    setState(() {
-      widget.task.name = name ?? widget.task.name;
-      widget.task.isCompleted = isCompleted ?? widget.task.isCompleted;
-    });
+    final updatedTask = Task(
+      name ?? widget.task.name,
+      isCompleted ?? widget.task.isCompleted,
+      widget.task.href,
+    );
 
-    if (name != null) {
-      if (_debounce?.isActive ?? false) _debounce?.cancel();
-      _debounce = Timer(const Duration(milliseconds: App.debounceMs), () {
-        widget.onUpdate(widget.task);
-      });
-    } else {
-      widget.onUpdate(widget.task);
-    }
+    widget.onUpdate(updatedTask);
   }
 
   @override

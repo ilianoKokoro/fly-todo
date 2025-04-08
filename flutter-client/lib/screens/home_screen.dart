@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:fly_todo/components/task_column.dart';
 import 'package:fly_todo/core/modal.dart';
@@ -21,16 +23,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<Task> _tasks = [];
   bool _loading = false;
+  Task? _lastUpdatedTask;
+  Timer? _updateDebounce;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      getTasks();
-    });
+    _getTasks();
   }
 
-  Future<void> getTasks() async {
+  @override
+  void dispose() {
+    _updateDebounce?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _getTasks() async {
     setState(() {
       _loading = true;
     });
@@ -68,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void _logOut() async {
+  Future<void> _logOut() async {
     setState(() {
       _loading = true;
     });
@@ -99,14 +107,27 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _onTaskUpdate(Task updatedTask) async {
     try {
-      await updatedTask.update();
-
       int index = _tasks.indexWhere((item) => item.href == updatedTask.href);
       if (index != -1) {
         setState(() {
           _tasks[index] = updatedTask;
         });
       }
+
+      if (_updateDebounce?.isActive ?? false) {
+        if (updatedTask.href != _lastUpdatedTask?.href) {
+          _lastUpdatedTask?.update();
+        }
+        _updateDebounce?.cancel();
+      }
+
+      _updateDebounce = Timer(
+        const Duration(milliseconds: App.debounceMs),
+        () async {
+          await updatedTask.update();
+        },
+      );
+      _lastUpdatedTask = updatedTask;
     } on Exception catch (err) {
       if (mounted) {
         Modal.showError(err, context);
@@ -116,10 +137,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _onTaskDelete(Task taskToDelete) async {
     try {
-      await taskToDelete.delete();
       setState(() {
         _tasks.remove(taskToDelete);
       });
+      await taskToDelete.delete();
     } on Exception catch (err) {
       if (mounted) {
         Modal.showError(err, context);
@@ -140,11 +161,14 @@ class _HomeScreenState extends State<HomeScreen> {
         centerTitle: true,
         title: const Text(App.title),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async => {_createTask()},
-        enableFeedback: true,
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton:
+          _loading
+              ? null
+              : FloatingActionButton(
+                onPressed: () async => {_createTask()},
+                enableFeedback: true,
+                child: const Icon(Icons.add),
+              ),
       body: DefaultTabController(
         initialIndex: 0,
         length: 2,

@@ -41,6 +41,7 @@ class TaskColumn extends StatelessWidget {
                       final task = tasks[index];
                       return TaskRow(
                         task: task,
+                        key: ValueKey(task.href),
                         onUpdate: onUpdate,
                         onDelete: onDelete,
                       );

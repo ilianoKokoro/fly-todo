@@ -59,7 +59,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
       _goToHomeScreen();
     } on Exception catch (err) {
-      if (context.mounted) {
+      if (mounted) {
         Modal.showError(err, context);
       }
     } finally {

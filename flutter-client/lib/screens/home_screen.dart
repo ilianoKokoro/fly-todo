@@ -76,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       await _authRepository.logOut();
     } on Exception catch (err) {
-      if (context.mounted) {
+      if (mounted) {
         Modal.showError(err, context);
       }
     } finally {
@@ -91,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
         _tasks.add(newTask);
       });
     } on Exception catch (err) {
-      if (context.mounted) {
+      if (mounted) {
         Modal.showError(err, context);
       }
     }
@@ -108,18 +108,22 @@ class _HomeScreenState extends State<HomeScreen> {
         });
       }
     } on Exception catch (err) {
-      Modal.showError(err, context);
+      if (mounted) {
+        Modal.showError(err, context);
+      }
     }
   }
 
   Future<void> _onTaskDelete(Task taskToDelete) async {
     try {
+      await taskToDelete.delete();
       setState(() {
         _tasks.remove(taskToDelete);
       });
-      await taskToDelete.delete();
     } on Exception catch (err) {
-      Modal.showError(err, context);
+      if (mounted) {
+        Modal.showError(err, context);
+      }
     }
   }
 
@@ -146,7 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
         length: 2,
         child: Scaffold(
           appBar: AppBar(
-            title: const Text('TabBar Sample'),
+            title: const Text('Tasks'),
             bottom: const TabBar(
               tabs: <Widget>[
                 Tab(icon: Text("Tasks TODO")),

@@ -35,17 +35,6 @@ class _TaskColumnState extends State<TaskColumn> {
   void didUpdateWidget(covariant TaskColumn oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    // Handle transition from empty to first item
-    if (widget.tasks.isNotEmpty && _tasks.isEmpty) {
-      _tasks = List.from(widget.tasks);
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (_listKey.currentState != null && _tasks.isNotEmpty) {
-          _listKey.currentState!.insertItem(0);
-        }
-      });
-      return;
-    }
-
     // Handle removal of last item
     if (widget.tasks.isEmpty && _tasks.isNotEmpty) {
       final lastItem = _tasks.last;
@@ -84,6 +73,15 @@ class _TaskColumnState extends State<TaskColumn> {
         }
       }
     }
+
+    // Handle updates to existing items
+    if (widget.tasks.length == _tasks.length) {
+      for (int i = 0; i < _tasks.length; i++) {
+        if (i < widget.tasks.length && _tasks[i] != widget.tasks[i]) {
+          _tasks[i] = widget.tasks[i];
+        }
+      }
+    }
   }
 
   void _insertItem(int index, Task task) {
@@ -108,29 +106,25 @@ class _TaskColumnState extends State<TaskColumn> {
   }
 
   Widget _getRemovedObject(Task task, Animation<double> animation) {
-    // TODO THE ANIMATION IS INVERTED
-    final invertedAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.0,
-    ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOut));
-
-    return FadeTransition(
-      opacity: invertedAnimation,
-      child: ScaleTransition(
-        scale: Tween<double>(
-          begin: 1.0,
-          end: 0.8,
-        ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOut)),
-        child: TaskRow(
-          task: task,
-          onUpdate: widget.onUpdate,
-          onDelete: widget.onDelete,
+    return AbsorbPointer(
+      child: FadeTransition(
+        opacity: animation,
+        child: ScaleTransition(
+          scale: Tween<double>(
+            begin: 0.8,
+            end: 1.0,
+          ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOut)),
+          child: TaskRow(
+            task: task,
+            onUpdate: widget.onUpdate,
+            onDelete: widget.onDelete,
+          ),
         ),
       ),
     );
   }
 
-  Widget _getCreatedObject(Animation<double> animation, Task task) {
+  Widget _getCreatedObject(Task task, Animation<double> animation) {
     return SlideTransition(
       position: Tween<Offset>(
         begin: const Offset(0.0, 0.5),
@@ -172,7 +166,7 @@ class _TaskColumnState extends State<TaskColumn> {
                               itemBuilder: (context, index, animation) {
                                 if (index >= 0 && index < _tasks.length) {
                                   final task = _tasks[index];
-                                  return _getCreatedObject(animation, task);
+                                  return _getCreatedObject(task, animation);
                                 }
                                 return Container();
                               },

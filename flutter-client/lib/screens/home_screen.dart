@@ -169,34 +169,39 @@ class _HomeScreenState extends State<HomeScreen> {
                 enableFeedback: true,
                 child: const Icon(Icons.add),
               ),
-      body: DefaultTabController(
-        initialIndex: 0,
-        length: 2,
-        child: Scaffold(
-          appBar: AppBar(
-            title: const Text('Tasks'),
-            bottom: const TabBar(
-              tabs: <Widget>[
-                Tab(icon: Text("Tasks TODO")),
-                Tab(icon: Text("All tasks")),
-              ],
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: DefaultTabController(
+            initialIndex: 0,
+            length: 2,
+            child: Scaffold(
+              appBar: AppBar(
+                title: const Text('Tasks'),
+                bottom: const TabBar(
+                  tabs: <Widget>[
+                    Tab(icon: Text("Tasks TODO")),
+                    Tab(icon: Text("All tasks")),
+                  ],
+                ),
+              ),
+              body: TabBarView(
+                children: <Widget>[
+                  TaskColumn(
+                    tasks: _tasks.where((model) => !model.isCompleted).toList(),
+                    onDelete: _onTaskDelete,
+                    onUpdate: _onTaskUpdate,
+                    loading: _loading,
+                  ),
+                  TaskColumn(
+                    tasks: _tasks,
+                    onUpdate: _onTaskUpdate,
+                    onDelete: _onTaskDelete,
+                    loading: _loading,
+                  ),
+                ],
+              ),
             ),
-          ),
-          body: TabBarView(
-            children: <Widget>[
-              TaskColumn(
-                tasks: _tasks.where((model) => !model.isCompleted).toList(),
-                onDelete: _onTaskDelete,
-                onUpdate: _onTaskUpdate,
-                loading: _loading,
-              ),
-              TaskColumn(
-                tasks: _tasks,
-                onUpdate: _onTaskUpdate,
-                onDelete: _onTaskDelete,
-                loading: _loading,
-              ),
-            ],
           ),
         ),
       ),

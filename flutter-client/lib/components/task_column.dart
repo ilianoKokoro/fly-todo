@@ -89,6 +89,8 @@ class _TaskColumnState extends State<TaskColumn> {
         child:
             widget.loading
                 ? const CircularProgressIndicator()
+                : widget.tasks.isEmpty
+                ? const Text("No tasks to show", key: ValueKey('empty'))
                 : CustomScrollView(
                   slivers: [
                     SliverAnimatedList(

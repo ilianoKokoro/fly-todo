@@ -25,7 +25,7 @@ msix_config:
     publisher_display_name: Ilian Delagrange
     identity_name: com.FlyToDo
     msix_version: 0.0.1.0
-    logo_path: web/icons/icon-512.png
+    logo_path: web/icons/web-app-manifest-512x512.png
     capabilities: internetClient
     architecture: x64
 

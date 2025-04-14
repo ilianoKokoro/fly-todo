@@ -1,28 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:fly_todo/components/task_row.dart';
-import 'package:fly_todo/core/constants.dart';
 import 'package:fly_todo/models/task.dart';
 
 class TaskColumn extends StatefulWidget {
-  final List<Task> tasks;
-  final bool loading;
-  final Function(Task) onUpdate;
-  final Function(Task) onDelete;
-
   const TaskColumn({
+    super.key,
     required this.tasks,
-    required this.loading,
     required this.onUpdate,
     required this.onDelete,
-    super.key,
+    required this.loading,
   });
+
+  final List<Task> tasks;
+  final ValueChanged<Task> onUpdate;
+  final ValueChanged<Task> onDelete;
+  final bool loading;
 
   @override
   State<TaskColumn> createState() => _TaskColumnState();
 }
 
 class _TaskColumnState extends State<TaskColumn> {
-  final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
+  final GlobalKey<SliverAnimatedListState> _listKey =
+      GlobalKey<SliverAnimatedListState>();
   late List<Task> _tasks;
 
   @override
@@ -35,47 +35,32 @@ class _TaskColumnState extends State<TaskColumn> {
   void didUpdateWidget(covariant TaskColumn oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    // Handle removal of last item
-    if (widget.tasks.isEmpty && _tasks.isNotEmpty) {
-      final lastItem = _tasks.last;
-      _tasks.clear();
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (_listKey.currentState != null) {
-          _listKey.currentState!.removeItem(
-            0,
-            (context, animation) => _getRemovedObject(lastItem, animation),
+    final newTasks = widget.tasks;
+    final oldTasks = _tasks;
+
+    if (newTasks.length > oldTasks.length) {
+      // Add new tasks
+      for (int i = 0; i < newTasks.length; i++) {
+        final task = newTasks[i];
+        if (i >= oldTasks.length || oldTasks[i].href != task.href) {
+          _tasks.insert(i, task);
+          _listKey.currentState?.insertItem(i);
+        }
+      }
+    } else if (newTasks.length < oldTasks.length) {
+      // Remove tasks
+      for (int i = oldTasks.length - 1; i >= 0; i--) {
+        final task = oldTasks[i];
+        if (!newTasks.any((newTask) => newTask.href == task.href)) {
+          _tasks.removeAt(i);
+          _listKey.currentState?.removeItem(
+            i,
+            (context, animation) => _getCreatedObject(task, animation),
           );
         }
-      });
-      return;
-    }
-
-    // Handle item additions
-    if (widget.tasks.length > _tasks.length) {
-      final newItems =
-          widget.tasks.where((item) => !_tasks.contains(item)).toList();
-      for (final item in newItems) {
-        final index = widget.tasks.indexOf(item);
-        if (index >= 0 && index <= _tasks.length) {
-          _insertItem(index, item);
-        }
       }
-    }
-
-    // Handle item removals
-    if (widget.tasks.length < _tasks.length) {
-      final removedItems =
-          _tasks.where((item) => !widget.tasks.contains(item)).toList();
-      for (final item in removedItems) {
-        final index = _tasks.indexOf(item);
-        if (index >= 0 && index < _tasks.length) {
-          _removeItem(index, item);
-        }
-      }
-    }
-
-    // Handle updates to existing items
-    if (widget.tasks.length == _tasks.length) {
+    } else {
+      // Handle updates to existing items
       for (int i = 0; i < _tasks.length; i++) {
         if (i < widget.tasks.length && _tasks[i] != widget.tasks[i]) {
           _tasks[i] = widget.tasks[i];
@@ -84,60 +69,14 @@ class _TaskColumnState extends State<TaskColumn> {
     }
   }
 
-  void _insertItem(int index, Task task) {
-    if (index >= 0 && index <= _tasks.length) {
-      _tasks.insert(index, task);
-      _listKey.currentState?.insertItem(
-        index,
-        duration: const Duration(milliseconds: App.animation),
-      );
-    }
-  }
-
-  void _removeItem(int index, Task task) {
-    if (index >= 0 && index < _tasks.length) {
-      _tasks.removeAt(index);
-      _listKey.currentState?.removeItem(
-        index,
-        (context, animation) => _getRemovedObject(task, animation),
-        duration: const Duration(milliseconds: App.animation),
-      );
-    }
-  }
-
-  Widget _getRemovedObject(Task task, Animation<double> animation) {
-    return AbsorbPointer(
-      child: FadeTransition(
-        opacity: animation,
-        child: ScaleTransition(
-          scale: Tween<double>(
-            begin: 0.8,
-            end: 1.0,
-          ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOut)),
-          child: TaskRow(
-            task: task,
-            onUpdate: widget.onUpdate,
-            onDelete: widget.onDelete,
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _getCreatedObject(Task task, Animation<double> animation) {
-    return SlideTransition(
-      position: Tween<Offset>(
-        begin: const Offset(0.0, 0.5),
-        end: Offset.zero,
-      ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOut)),
-      child: FadeTransition(
-        opacity: animation,
-        child: TaskRow(
-          key: ValueKey(task.href),
-          task: task,
-          onUpdate: widget.onUpdate,
-          onDelete: widget.onDelete,
-        ),
+    return SizeTransition(
+      sizeFactor: animation,
+      child: TaskRow(
+        key: ValueKey(task.href),
+        task: task,
+        onUpdate: widget.onUpdate,
+        onDelete: widget.onDelete,
       ),
     );
   }
@@ -150,28 +89,17 @@ class _TaskColumnState extends State<TaskColumn> {
         child:
             widget.loading
                 ? const CircularProgressIndicator()
-                : AnimatedSwitcher(
-                  duration: const Duration(milliseconds: App.animation),
-                  child:
-                      _tasks.isEmpty
-                          ? const Text(
-                            "No tasks to show",
-                            key: ValueKey('empty'),
-                          )
-                          : ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 800),
-                            child: AnimatedList(
-                              key: _listKey,
-                              initialItemCount: _tasks.length,
-                              itemBuilder: (context, index, animation) {
-                                if (index >= 0 && index < _tasks.length) {
-                                  final task = _tasks[index];
-                                  return _getCreatedObject(task, animation);
-                                }
-                                return Container();
-                              },
-                            ),
-                          ),
+                : CustomScrollView(
+                  slivers: [
+                    SliverAnimatedList(
+                      key: _listKey,
+                      initialItemCount: _tasks.length,
+                      itemBuilder: (context, index, animation) {
+                        final task = _tasks[index];
+                        return _getCreatedObject(task, animation);
+                      },
+                    ),
+                  ],
                 ),
       ),
     );

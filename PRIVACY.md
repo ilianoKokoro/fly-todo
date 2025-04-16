@@ -1,6 +1,6 @@
 # Privacy Policy
 
-_Last Updated: [Insert Date]_
+_Last Updated: 16 April 2025_
 
 Welcome to **Fly TODO**! Your privacy is important to us, and we’re committed to protecting your personal data. This Privacy Policy explains how we collect, use, and safeguard your information when you use our app.
 

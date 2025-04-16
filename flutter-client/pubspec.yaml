@@ -23,11 +23,13 @@ dev_dependencies:
 msix_config:
     display_name: Fly TODO
     publisher_display_name: Ilian Delagrange
-    identity_name: com.FlyToDo
+    identity_name: IlianDelagrange.FlyTODO
+    family_name: IlianDelagrange.FlyTODO_e59jqyr24yf08
     msix_version: 0.0.1.0
     logo_path: web/icons/web-app-manifest-512x512.png
     capabilities: internetClient
     architecture: x64
+    publisher: CN=FBE2EC37-2851-4624-9F60-D21F9C6C6665
 
 flutter:
     uses-material-design: true

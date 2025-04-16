@@ -177,7 +177,6 @@ class _HomeScreenState extends State<HomeScreen> {
             length: 2,
             child: Scaffold(
               appBar: AppBar(
-                title: const Text('Tasks'),
                 bottom: const TabBar(
                   tabs: <Widget>[
                     Tab(icon: Text("Tasks TODO")),

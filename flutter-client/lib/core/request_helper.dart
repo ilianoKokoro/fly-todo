@@ -39,6 +39,7 @@ abstract class RequestHelper {
         body: body,
       ),
       expectCreate ? 201 : 200,
+      doAuth: doAuth,
     );
   }
 
@@ -68,10 +69,11 @@ abstract class RequestHelper {
     Future<http.Response> Function() requestFn,
     int expectedCode, {
     int retryCount = 0,
+    bool doAuth = true,
   }) async {
     final response = await requestFn();
 
-    if (response.statusCode == 401 && retryCount == 0) {
+    if (response.statusCode == 401 && retryCount == 0 && doAuth) {
       final tokens = await _datastoreRepository.getTokens();
       if (tokens.refresh.isNotEmpty) {
         await _refreshTokens();

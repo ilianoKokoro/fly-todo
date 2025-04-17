@@ -95,15 +95,15 @@ jobs:
               id: get_version
               run: |
                   version=$(grep -E '^version:' ./flutter-client/pubspec.yaml | sed 's/version:[[:space:]]*//')
+                  echo "version=$version"
                   echo "version=$version" >> $GITHUB_OUTPUT
 
-            - uses: actions/checkout@v3
             - name: Create a Release
               uses: ncipollo/release-action@v1
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
                   tag: v${{ steps.get_version.outputs.version }}
-                  artifacts: ./artifacts/**
+                  artifacts: ./artifacts/**/*
                   generateReleaseNotes: true
                   draft: true

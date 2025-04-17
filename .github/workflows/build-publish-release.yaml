@@ -11,6 +11,7 @@ on:
         paths:
             - "flutter-client/**"
             - ".github/workflows/**"
+    workflow_dispatch:
 env:
     SUB_DIR: flutter-client
     ANDROID_TARGET_BINARY_NAME: android-fly-todo-release
@@ -21,10 +22,6 @@ env:
 name: Build the flutter binaries
 jobs:
     build-android-apk:
-        concurrency:
-            group: build
-            cancel-in-progress: true
-
         runs-on: ubuntu-latest
         name: Build the Android APK
         steps:
@@ -52,10 +49,6 @@ jobs:
                   path: ./${{env.SUB_DIR}}/${{env.ANDROID_TARGET_BINARY_NAME}}.apk
                   if-no-files-found: error
     build-windows-binary:
-        concurrency:
-            group: build
-            cancel-in-progress: true
-
         runs-on: windows-latest
         name: Build the Windows installer
         steps:
@@ -83,9 +76,6 @@ jobs:
                   if-no-files-found: error
     publish-github-release:
         if: github.ref == 'refs/heads/prod'
-        concurrency:
-            group: publish
-            cancel-in-progress: true
         needs:
             - build-android-apk
             - build-windows-binary

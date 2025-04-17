@@ -5,13 +5,8 @@ on:
         paths:
             - "flutter-client/**"
             - ".github/workflows/**"
-    pull_request:
-        branches:
-            - prod
-        paths:
-            - "flutter-client/**"
-            - ".github/workflows/**"
     workflow_dispatch:
+
 env:
     SUB_DIR: flutter-client
     ANDROID_TARGET_BINARY_NAME: android-fly-todo-release
@@ -75,7 +70,10 @@ jobs:
                   path: ./${{env.SUB_DIR}}/${{env.ANDROID_TARGET_BINARY_NAME}}.msix
                   if-no-files-found: error
     publish-github-release:
-        if: github.ref == 'refs/heads/prod'
+        permissions:
+            packages: write
+            contents: write
+        if: github.event_name == 'workflow_dispatch'
         needs:
             - build-android-apk
             - build-windows-binary
@@ -86,6 +84,22 @@ jobs:
 
             - name: Download artifacts
               uses: actions/download-artifact@v4
+              with:
+                  path: builds
 
-            - run: ls -la
-            - run: echo "It would upload the binaries"
+            - name: Extract binaries
+              run: zip -r builds.zip builds/
+
+            - name: Extract version
+              id: get_version
+              run: |
+                  version=$(grep -E '^version:' ./flutter-client/pubspec.yaml | sed 's/version:[[:space:]]*//')
+                  echo "version=$version" >> $GITHUB_OUTPUT
+
+            - uses: actions/checkout@v3
+            - name: Create a Release
+              uses: elgohr/Github-Release-Action@v5
+              with:
+                  title: v${{ steps.get_version.outputs.version }}
+                  tag: v${{ steps.get_version.outputs.version }}
+                  workdir: builds

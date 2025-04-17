@@ -1,12 +1,17 @@
 on:
     push:
         branches:
+            - main
+        paths:
+            - "flutter-client/**"
+            - ".github/workflows/**"
+    pull_request:
+        branches:
             - prod
         paths:
             - "flutter-client/**"
             - ".github/workflows/**"
     workflow_dispatch:
-
 env:
     SUB_DIR: flutter-client
     ANDROID_TARGET_BINARY_NAME: android-fly-todo-release
@@ -14,11 +19,11 @@ env:
     ANDROID_APK_PATH: ./build/app/outputs/flutter-apk/app-release.apk
     WINDOWS_BINARY_LOCATION: build/windows/x64/runner/Release/fly_todo.msix
 
-name: Build the flutter binaries
+name: Build the binaries and publish if on Prod
 jobs:
     build-android-apk:
         runs-on: ubuntu-latest
-        name: build-android-apk
+        name: Build the Android APK
         steps:
             - uses: actions/checkout@v4
 
@@ -45,7 +50,7 @@ jobs:
                   if-no-files-found: error
     build-windows-binary:
         runs-on: windows-latest
-        name: build-windows-binary
+        name: Build the Windows installer
         steps:
             - uses: actions/checkout@v4
 
@@ -69,3 +74,18 @@ jobs:
                   name: ${{env.WINDOWS_TARGET_BUNDLE_NAME}}
                   path: ./${{env.SUB_DIR}}/${{env.ANDROID_TARGET_BINARY_NAME}}.msix
                   if-no-files-found: error
+    publish-github-release:
+        if: github.ref == 'refs/heads/prod'
+        needs:
+            - build-android-apk
+            - build-windows-binary
+        runs-on: ubuntu-latest
+        name: Publish the GitHub release
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Download artifacts
+              uses: actions/download-artifact@v4
+
+            - run: ls -la
+            - run: echo "It would upload the binaries"

@@ -19,7 +19,7 @@ env:
     ANDROID_APK_PATH: ./build/app/outputs/flutter-apk/app-release.apk
     WINDOWS_BINARY_LOCATION: build/windows/x64/runner/Release/fly_todo.msix
 
-name: Build the flutter binaries
+name: Build the binaries and publish if on Prod
 jobs:
     build-android-apk:
         runs-on: ubuntu-latest

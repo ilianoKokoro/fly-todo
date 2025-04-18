@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "fly_todo" "\0"
+            VALUE "FileDescription", "Fly TODO" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "fly_todo" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2025 com.example. All rights reserved." "\0"
+            VALUE "InternalName", "Fly TODO" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2025 Ilian Delagrange. All rights reserved." "\0"
             VALUE "OriginalFilename", "fly_todo.exe" "\0"
-            VALUE "ProductName", "fly_todo" "\0"
+            VALUE "ProductName", "Fly TODO" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

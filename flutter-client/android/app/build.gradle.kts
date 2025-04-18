@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.fly_todo"
+    namespace = "app.vercel.fly_todo"
     compileSdk = flutter.compileSdkVersion
  //   ndkVersion = flutter.ndkVersion
     ndkVersion = "27.0.12077973"

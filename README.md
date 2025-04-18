@@ -24,7 +24,7 @@ If you're looking for a lightweight task manager that just works, this is the ap
 
 ### Windows
 
-The app is available on Windows either by the [Microsoft store](https://apps.microsoft.com/home) or directly with the installer that can be downloaded on the latest [release page](https://github.com/ilianoKokoro/fly-todo/releases/latest)
+The app is available on Windows either by the [Microsoft store](https://apps.microsoft.com/detail/9N6TLNJ99NBP) or directly with the installer that can be downloaded on the latest [release page](https://github.com/ilianoKokoro/fly-todo/releases/latest)
 
 ### Web
 

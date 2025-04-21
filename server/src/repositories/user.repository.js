@@ -48,8 +48,8 @@ class UserRepository {
 
     async create(user) {
         try {
-            const user = await User.findOne({ name: user.name });
-            if (user) {
+            const existingUser = await User.findOne({ name: user.name });
+            if (existingUser) {
                 throw Error("This username is already taken");
             }
 

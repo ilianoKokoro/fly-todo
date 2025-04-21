@@ -48,6 +48,16 @@ class UserRepository {
 
     async create(user) {
         try {
+            const user = await User.findOne({ name: user.name });
+            if (user) {
+                throw Error("This username is already taken");
+            }
+
+            const userEmail = await User.findOne({ email: user.email });
+            if (userEmail) {
+                throw Error("This email is already used");
+            }
+
             user.passwordHash = await argon.hash(user.password);
             delete user.password;
             const newUser = await User.create(user);

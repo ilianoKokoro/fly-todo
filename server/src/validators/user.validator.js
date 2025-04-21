@@ -5,8 +5,8 @@ const { body } = expressValidator;
 class UserValidators {
     complete() {
         return [
-            body("name").exists().withMessage("Requis").bail(),
-            body("password").exists().withMessage("Requis").bail(),
+            body("name").exists().withMessage("Required").bail(),
+            body("password").exists().withMessage("Required").bail(),
             ...this.partial(),
         ];
     }
@@ -16,7 +16,9 @@ class UserValidators {
             body("name")
                 .optional()
                 .isLength({ min: 2, max: 16 })
-                .withMessage("The name must have between 2 and 16 characters")
+                .withMessage(
+                    "The username must have between 2 and 16 characters"
+                )
                 .bail(),
 
             body("email")

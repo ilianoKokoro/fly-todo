@@ -83,6 +83,10 @@ abstract class RequestHelper {
           retryCount: retryCount + 1,
         );
       }
+    } else if (response.statusCode != expectedCode &&
+        response.statusCode != 401 &&
+        retryCount <= 1) {
+      return _makeRequest(requestFn, expectedCode, retryCount: retryCount + 1);
     }
 
     return handleResponse(response, expectedCode);

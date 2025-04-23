@@ -7,6 +7,7 @@ class TextInputWithPadding extends StatelessWidget {
   final Function? onSubmitted;
   final TextInputType type;
   final bool enabled;
+  final String initialValue;
 
   const TextInputWithPadding({
     required this.placeholder,
@@ -15,6 +16,7 @@ class TextInputWithPadding extends StatelessWidget {
     this.type = TextInputType.text,
     this.enabled = true,
     this.onSubmitted,
+    this.initialValue = "",
     super.key,
   });
 
@@ -22,7 +24,8 @@ class TextInputWithPadding extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.all(padding),
-      child: TextField(
+      child: TextFormField(
+        initialValue: initialValue,
         enabled: enabled,
         decoration: InputDecoration(
           border: const OutlineInputBorder(),
@@ -31,7 +34,7 @@ class TextInputWithPadding extends StatelessWidget {
         onChanged: (value) => onChanged(value),
         keyboardType: type,
         obscureText: type == TextInputType.visiblePassword,
-        onSubmitted: onSubmitted != null ? (_) => onSubmitted!() : null,
+        onFieldSubmitted: onSubmitted != null ? (_) => onSubmitted!() : null,
       ),
     );
   }

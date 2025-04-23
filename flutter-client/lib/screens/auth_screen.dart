@@ -101,6 +101,7 @@ class _AuthScreenState extends State<AuthScreen> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 TextInputWithPadding(
+                                  initialValue: _username,
                                   enabled: !_loading,
                                   placeholder: 'Username',
                                   padding: 8,
@@ -111,6 +112,7 @@ class _AuthScreenState extends State<AuthScreen> {
                                 ),
                                 _currentScreen == AuthType.signUp
                                     ? TextInputWithPadding(
+                                      initialValue: _email,
                                       enabled: !_loading,
                                       placeholder: 'Email',
                                       padding: 8,
@@ -122,6 +124,7 @@ class _AuthScreenState extends State<AuthScreen> {
                                     )
                                     : SizedBox.shrink(),
                                 TextInputWithPadding(
+                                  initialValue: _password,
                                   enabled: !_loading,
                                   placeholder: 'Password',
                                   padding: 8,
@@ -138,6 +141,7 @@ class _AuthScreenState extends State<AuthScreen> {
                                 ),
                                 _currentScreen == AuthType.signUp
                                     ? TextInputWithPadding(
+                                      initialValue: _passwordConfirm,
                                       enabled: !_loading,
                                       placeholder: 'Confirm Password',
                                       padding: 8,

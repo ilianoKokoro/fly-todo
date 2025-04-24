@@ -27,8 +27,26 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
           locale: Locale("en"),
           title: App.title,
-          theme: ThemeData(colorScheme: lightScheme, useMaterial3: true),
-          darkTheme: ThemeData(colorScheme: darkScheme, useMaterial3: true),
+          theme: ThemeData(
+            colorScheme: lightScheme,
+            useMaterial3: true,
+            pageTransitionsTheme: const PageTransitionsTheme(
+              builders: {
+                TargetPlatform.android:
+                    PredictiveBackPageTransitionsBuilder(), // Predictive back gesture
+              },
+            ),
+          ),
+          darkTheme: ThemeData(
+            colorScheme: darkScheme,
+            useMaterial3: true,
+            pageTransitionsTheme: const PageTransitionsTheme(
+              builders: {
+                TargetPlatform.android:
+                    PredictiveBackPageTransitionsBuilder(), // Predictive back gesture
+              },
+            ),
+          ),
           themeMode: ThemeMode.system,
           home: HomeScreen(),
         );

@@ -34,6 +34,16 @@ The app is available on all devices at [fly-todo.vercel.app](https://fly-todo.ve
 
 The app is only available by the APK that can be downloaded on the latest [release page](https://github.com/ilianoKokoro/fly-todo/releases/latest)
 
+<p>
+You can also get the Beta build from this link :
+</p>
+
+**⚠️ This build may not be stable as it is not a release ⚠️**
+
+[![Download APK](https://github.com/IlianoKokoro/fly-todo/actions/workflows/build-publish-release.yaml/badge.svg?branch=main)](https://nightly.link/ilianoKokoro/fly-todo/workflows/build-publish-release.yaml/main/android-fly-todo-release.zip)
+
+<a href="https://nightly.link/ilianoKokoro/fly-todo/workflows/build-publish-release.yaml/main/android-fly-todo-release.zip"><img src="https://i.postimg.cc/sxWv2J29/badge-github.png" height="80"></a>
+
 ### Linux
 
 Coming soon ...

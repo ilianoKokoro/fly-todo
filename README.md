@@ -16,7 +16,7 @@ Features:
 -   Quickly add, name, and complete tasks
 -   Secure task syncing across all your devices
 -   Easy account setup with username, email, and password
--   100% free, with no ads or subscriptions
+-   100% free and open source, with no ads or subscriptions
 
 If you're looking for a lightweight task manager that just works, this is the app for you.
 
@@ -69,7 +69,7 @@ Coming soon ...
 Starting the Flutter client in dev mode :
 
 ```
-flutter run ./lib/main.dart
+flutter run
 ```
 
 #### Node server

@@ -43,6 +43,7 @@ jobs:
               run: flutter doctor -v
 
             - name: Get the packages
+              working-directory: ${{env.SUB_DIR}}
               run: flutter pub get
 
             - name: Build APK

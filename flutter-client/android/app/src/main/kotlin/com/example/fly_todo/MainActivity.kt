@@ -1,4 +1,4 @@
-package app.vercel.fly_todo
+package com.ilianokokoro.fly_todo
 
 import io.flutter.embedding.android.FlutterActivity
 

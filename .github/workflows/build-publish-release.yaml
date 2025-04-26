@@ -93,7 +93,6 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         needs:
             - build-android-apk
-            - build-windows-binary
         runs-on: ubuntu-latest
         name: Publish the GitHub release
         steps:

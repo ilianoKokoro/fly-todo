@@ -17,6 +17,7 @@ env:
     WINDOWS_TARGET_BUNDLE_NAME: windows-fly-todo-release
     ANDROID_APK_PATH: ./build/app/outputs/flutter-apk/app-release.apk
     WINDOWS_BINARY_LOCATION: build/windows/x64/runner/Release/fly_todo.msix
+    STORE_FILE_PATH: /tmp/my-release-key.jks
 
 name: Build the binaries and publish if on Prod
 jobs:
@@ -41,6 +42,19 @@ jobs:
 
             - name: Print all Flutter versions
               run: flutter doctor -v
+
+            - name: Set up Keystore
+              run: |
+                  echo "$KEYSTORE_BASE64" | base64 -d > ${{ env.STORE_FILE_PATH }}
+              env:
+                  KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+
+            - name: Set up keystore properties
+              run: |
+                  echo "storeFile=${{ env.STORE_FILE_PATH }}" >> $GITHUB_ENV
+                  echo "storePassword=${{ secrets.KEY_STORE_PASSWORD }}" >> $GITHUB_ENV
+                  echo "keyAlias=${{ secrets.ALIAS }}" >> $GITHUB_ENV
+                  echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> $GITHUB_ENV
 
             - name: Get the packages
               working-directory: ${{env.SUB_DIR}}

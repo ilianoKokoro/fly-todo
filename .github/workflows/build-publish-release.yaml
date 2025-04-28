@@ -17,7 +17,7 @@ env:
     WINDOWS_TARGET_BUNDLE_NAME: windows-fly-todo-release
     ANDROID_APK_PATH: ./build/app/outputs/flutter-apk/app-release.apk
     WINDOWS_BINARY_LOCATION: build/windows/x64/runner/Release/fly_todo.msix
-    STORE_FILE_PATH: /tmp/my-release-key.jks
+    STORE_FILE_PATH: /tmp/release-key.jks
 
 name: Build the binaries and publish if on Prod
 jobs:
@@ -49,12 +49,12 @@ jobs:
               env:
                   KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
 
-            - name: Set up keystore properties
+            - name: Create keystore.properties file
               run: |
-                  echo "storeFile=${{ env.STORE_FILE_PATH }}" >> $GITHUB_ENV
-                  echo "storePassword=${{ secrets.KEY_STORE_PASSWORD }}" >> $GITHUB_ENV
-                  echo "keyAlias=${{ secrets.ALIAS }}" >> $GITHUB_ENV
-                  echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> $GITHUB_ENV
+                  echo "storeFile=${{env.STORE_FILE_PATH}}" > $GITHUB_WORKSPACE/${{env.SUB_DIR}}/android/keystore.properties
+                  echo "storePassword=${{ secrets.KEY_STORE_PASSWORD }}" >> $GITHUB_WORKSPACE/${{env.SUB_DIR}}/android/keystore.properties
+                  echo "keyAlias=${{ secrets.ALIAS }}" >> $GITHUB_WORKSPACE/${{env.SUB_DIR}}/android/keystore.properties
+                  echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> $GITHUB_WORKSPACE/${{env.SUB_DIR}}/android/keystore.properties
 
             - name: Get the packages
               working-directory: ${{env.SUB_DIR}}

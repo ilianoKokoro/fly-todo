@@ -93,7 +93,7 @@ BEGIN
             VALUE "FileDescription", "Fly TODO" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "Fly TODO" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2025 Ilian Delagrange. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2025 ilianoKokoro. All rights reserved." "\0"
             VALUE "OriginalFilename", "fly_todo.exe" "\0"
             VALUE "ProductName", "Fly TODO" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"

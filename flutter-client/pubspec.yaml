@@ -1,7 +1,7 @@
 name: fly_todo
 description: "A simple cross-platform material design TODO app made with Flutter."
 publish_to: "none"
-version: 1.0.2
+version: 1.0.3
 
 environment:
     sdk: ^3.7.2

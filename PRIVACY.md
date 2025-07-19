@@ -1,6 +1,6 @@
 # Privacy Policy
 
-_Last Updated: 16 April 2025_
+_Last Updated: 19 July 2025_
 
 Welcome to **Fly TODO**! Your privacy is important to us, and we’re committed to protecting your personal data. This Privacy Policy explains how we collect, use, and safeguard your information when you use our app.
 
@@ -57,7 +57,7 @@ You have the right to:
 -   **Request deletion** of your account and data at any time
 -   **Update** your username or email
 
-To do so, just contact us at iliandelagrange@gmail.com.
+To do so, just contact us at iliano101v3@gmail.com.
 
 ---
 
@@ -80,4 +80,4 @@ The latest version will always be available right here.
 ## 8. Contact Us
 
 Have questions or concerns?
-Reach out to us at: iliandelagrange@gmail.com
+Reach out to us at: iliano101v3@gmail.com

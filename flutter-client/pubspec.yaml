@@ -22,7 +22,7 @@ dev_dependencies:
 
 msix_config:
     display_name: Fly TODO
-    publisher_display_name: Ilian Delagrange
+    publisher_display_name: ilianoKokoro
     identity_name: IlianDelagrange.FlyTODO
     family_name: IlianDelagrange.FlyTODO_e59jqyr24yf08
     msix_version: 1.0.2.0

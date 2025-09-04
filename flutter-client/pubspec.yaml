@@ -7,25 +7,25 @@ environment:
     sdk: ^3.7.2
 
 dependencies:
-    build_runner: ^2.4.15
+    build_runner: ^2.7.2
     dynamic_system_colors: ^1.8.0
     flutter:
         sdk: flutter
-    http: ^1.3.0
+    http: ^1.5.0
     shared_preferences: ^2.5.3
 
 dev_dependencies:
     flutter_test:
         sdk: flutter
-    flutter_lints: ^5.0.0
-    msix: ^3.16.8
+    flutter_lints: ^6.0.0
+    msix: ^3.16.12
 
 msix_config:
     display_name: Fly TODO
     publisher_display_name: ilianoKokoro
     identity_name: ilianoKokoro.FlyTODO
     family_name: ilianoKokoro.FlyTODO_e59jqyr24yf08
-    msix_version: 1.0.2.0
+    msix_version: 1.0.3.0
     logo_path: web/icons/web-app-manifest-512x512.png
     capabilities: internetClient
     architecture: x64

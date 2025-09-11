@@ -1,15 +1,9 @@
-import 'dart:convert';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fly_todo/components/button_row.dart';
 import 'package:fly_todo/components/text_input_with_padding.dart';
 import 'package:fly_todo/core/constants.dart';
 import 'package:fly_todo/core/modal.dart';
-import 'package:fly_todo/models/tokens.dart';
-import 'package:fly_todo/models/user.dart';
-import 'package:fly_todo/repositories/auth_repository.dart';
-import 'package:fly_todo/repositories/datastore_repository.dart';
-import 'package:fly_todo/screens/home_screen.dart';
 
 enum AuthType { logIn, signUp }
 
@@ -22,14 +16,10 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   bool _loading = false;
-  String _username = "";
   String _email = "";
   String _password = "";
   String _passwordConfirm = "";
   AuthType _currentScreen = AuthType.logIn;
-
-  final AuthRepository _authRepository = AuthRepository();
-  final DatastoreRepository _datastoreRepository = DatastoreRepository();
 
   void _executeAuthentication() async {
     try {
@@ -39,25 +29,32 @@ class _AuthScreenState extends State<AuthScreen> {
       setState(() {
         _loading = true;
       });
-      String bodyResult;
+      UserCredential userCredentials;
       if (_currentScreen == AuthType.logIn) {
-        bodyResult = await _authRepository.logIn(_username, _password);
+        userCredentials = await FirebaseAuth.instance
+            .signInWithEmailAndPassword(
+              email: _email.trim(),
+              password: _password.trim(),
+            );
       } else {
         if (_password != _passwordConfirm) {
           throw Exception("The passwords do not match");
         }
-        bodyResult = await _authRepository.signUp(_username, _email, _password);
+        userCredentials = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(
+              email: _email.trim(),
+              password: _password.trim(),
+            );
       }
-
-      var decodedBody = jsonDecode(bodyResult);
-
-      User user = User.fromJson(decodedBody["user"]);
-      Tokens tokens = Tokens.fromJson(decodedBody["tokens"]);
-
-      _datastoreRepository.saveTokens(tokens);
-      _datastoreRepository.saveUser(user);
-
-      _goToHomeScreen();
+      debugPrint(userCredentials.toString());
+    } on FirebaseAuthException catch (err) {
+      if (mounted) {
+        Modal.showInfo(
+          "Authentication Error",
+          err.message ?? "Unknown error",
+          context,
+        );
+      }
     } on Exception catch (err) {
       if (mounted) {
         Modal.showError(err, context);
@@ -67,14 +64,6 @@ class _AuthScreenState extends State<AuthScreen> {
         _loading = false;
       });
     }
-  }
-
-  void _goToHomeScreen() {
-    if (!mounted) return;
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => HomeScreen()),
-    );
   }
 
   @override
@@ -101,28 +90,16 @@ class _AuthScreenState extends State<AuthScreen> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 TextInputWithPadding(
-                                  initialValue: _username,
+                                  initialValue: _email,
                                   enabled: !_loading,
-                                  placeholder: 'Username',
+                                  placeholder: 'Email',
                                   padding: 8,
                                   onChanged:
                                       (newValue) => setState(() {
-                                        _username = newValue;
+                                        _email = newValue;
                                       }),
+                                  type: TextInputType.emailAddress,
                                 ),
-                                _currentScreen == AuthType.signUp
-                                    ? TextInputWithPadding(
-                                      initialValue: _email,
-                                      enabled: !_loading,
-                                      placeholder: 'Email',
-                                      padding: 8,
-                                      onChanged:
-                                          (newValue) => setState(() {
-                                            _email = newValue;
-                                          }),
-                                      type: TextInputType.emailAddress,
-                                    )
-                                    : SizedBox.shrink(),
                                 TextInputWithPadding(
                                   initialValue: _password,
                                   enabled: !_loading,
@@ -187,10 +164,10 @@ class _AuthScreenState extends State<AuthScreen> {
                 },
                 rightButtonEnabled:
                     (_currentScreen == AuthType.logIn && !_loading) ||
-                    (_username != "" && _password != "" && _email != ""),
+                    (_password != "" && _email != ""),
                 leftButtonEnabled:
                     (_currentScreen == AuthType.signUp && !_loading) ||
-                    (_username != "" && _password != ""),
+                    (_email != "" && _password != ""),
                 mainButtonIsLeft: _currentScreen == AuthType.logIn,
               ),
             ],

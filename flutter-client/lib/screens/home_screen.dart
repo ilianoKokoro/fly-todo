@@ -1,14 +1,11 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fly_todo/components/task_column.dart';
 import 'package:fly_todo/core/modal.dart';
 import 'package:fly_todo/core/constants.dart';
 import 'package:fly_todo/models/task.dart';
-import 'package:fly_todo/models/user.dart';
-import 'package:fly_todo/repositories/auth_repository.dart';
-import 'package:fly_todo/repositories/datastore_repository.dart';
-import 'package:fly_todo/screens/auth_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,9 +15,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final DatastoreRepository _datastoreRepository = DatastoreRepository();
-  final AuthRepository _authRepository = AuthRepository();
-
   List<Task> _tasks = [];
   bool _loading = false;
   Task? _lastUpdatedTask;
@@ -42,37 +36,21 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _loading = true;
     });
-
     try {
-      User savedUser = await _datastoreRepository.getUser();
-      var tasks = await savedUser.getTasks();
+      // TODO get tasks
+      // User savedUser = await _datastoreRepository.getUser();
+      // var tasks = await savedUser.getTasks();
       setState(() {
-        _tasks = tasks;
+        _tasks = [];
       });
 
       setState(() {
         _loading = false;
       });
-    } catch (_) {
-      _returnToAuth();
-    }
-  }
-
-  void _returnToAuth({showMessage = false}) {
-    _datastoreRepository.clearDatastore();
-    Navigator.pushReplacement(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => AuthScreen(),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(opacity: animation, child: child);
-        },
-        transitionDuration: Duration(milliseconds: Transitions.duration),
-      ),
-    );
-
-    if (showMessage) {
-      Modal.showInfo("Log out successful", "Successfully logged out", context);
+    } on Exception catch (err) {
+      if (mounted) {
+        Modal.showError(err, context);
+      }
     }
   }
 
@@ -82,13 +60,11 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     try {
-      await _authRepository.logOut();
+      await FirebaseAuth.instance.signOut();
     } on Exception catch (err) {
       if (mounted) {
         Modal.showError(err, context);
       }
-    } finally {
-      _returnToAuth();
     }
   }
 

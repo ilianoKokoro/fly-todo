@@ -9,6 +9,8 @@ environment:
 dependencies:
     build_runner: ^2.8.0
     dynamic_system_colors: ^1.8.0
+    firebase_auth: ^6.0.2
+    firebase_core: ^4.1.0
     flutter:
         sdk: flutter
     http: ^1.5.0

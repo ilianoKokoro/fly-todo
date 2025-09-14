@@ -18,6 +18,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   Task? _lastUpdatedTask;
   Timer? _updateDebounce;
+  List<Task> _taskList = [];
 
   @override
   void dispose() {
@@ -47,6 +48,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _onTaskUpdate(Task updatedTask) async {
     try {
+      if (updatedTask.id == _lastUpdatedTask?.id &&
+          updatedTask.isCompleted != _lastUpdatedTask?.isCompleted) {
+        _updateDebounce?.cancel();
+        await updatedTask.update();
+        _lastUpdatedTask = updatedTask;
+        return;
+      }
+
       if (_updateDebounce?.isActive ?? false) {
         if (updatedTask.id != _lastUpdatedTask?.id) {
           _lastUpdatedTask?.update();
@@ -100,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: StreamBuilder(
           stream:
               FirebaseFirestore.instance
-                  .collection("tasks")
+                  .collection(Collections.tasks)
                   .where(
                     "creator",
                     isEqualTo: FirebaseAuth.instance.currentUser!.uid,
@@ -115,14 +124,10 @@ class _HomeScreenState extends State<HomeScreen> {
               if (!snapshot.hasData) {
                 throw Exception();
               }
-              snapshot.data!.docs;
+              _taskList = Task.listFromDocuments(snapshot.data!.docs);
             } catch (e) {
               return const Text("No tasks");
             }
-            final tasks = snapshot.data!.docs;
-            final uncompletedTasks = tasks.where(
-              (task) => task.data()["isCompleted"] == "false",
-            );
 
             return ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 800),
@@ -141,13 +146,16 @@ class _HomeScreenState extends State<HomeScreen> {
                   body: TabBarView(
                     children: <Widget>[
                       TaskColumn(
-                        tasks: Task.listFromDocuments(uncompletedTasks),
+                        tasks:
+                            _taskList
+                                .where((task) => !task.isCompleted)
+                                .toList(),
                         onDelete: _onTaskDelete,
                         onUpdate: _onTaskUpdate,
                         loading: false,
                       ),
                       TaskColumn(
-                        tasks: Task.listFromDocuments(tasks),
+                        tasks: _taskList,
                         onUpdate: _onTaskUpdate,
                         onDelete: _onTaskDelete,
                         loading: false,

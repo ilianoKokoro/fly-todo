@@ -10,6 +10,10 @@ abstract class App {
   static const Environment currentEnvironment = Environment.prod;
 }
 
+abstract class Collections {
+  static const String tasks = "tasks";
+}
+
 abstract class Transitions {
   static const int duration = 200;
 }

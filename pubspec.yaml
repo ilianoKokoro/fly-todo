@@ -8,14 +8,14 @@ environment:
 
 dependencies:
     build_runner: ^2.8.0
-    cloud_firestore: ^6.0.1
     dynamic_system_colors: ^1.8.0
-    firebase_auth: ^6.0.2
-    firebase_core: ^4.1.0
     flutter:
         sdk: flutter
     http: ^1.5.0
     shared_preferences: ^2.5.3
+    firebase_auth: ^6.0.2
+    firebase_core: ^4.1.0
+    cloud_firestore: ^6.0.1
 
 dev_dependencies:
     flutter_test:

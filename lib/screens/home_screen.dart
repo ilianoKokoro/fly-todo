@@ -18,7 +18,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   Task? _lastUpdatedTask;
   Timer? _updateDebounce;
-  List<Task> _taskList = [];
+  List<Task> _tasks = [];
 
   @override
   void dispose() {
@@ -48,6 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _onTaskUpdate(Task updatedTask) async {
     try {
+      // If the completed state change, just sent an update automatically
       if (updatedTask.id == _lastUpdatedTask?.id &&
           updatedTask.isCompleted != _lastUpdatedTask?.isCompleted) {
         _updateDebounce?.cancel();
@@ -124,7 +125,7 @@ class _HomeScreenState extends State<HomeScreen> {
               if (!snapshot.hasData) {
                 throw Exception();
               }
-              _taskList = Task.listFromDocuments(snapshot.data!.docs);
+              _tasks = Task.listFromDocuments(snapshot.data!.docs);
             } catch (e) {
               return const Text("No tasks");
             }
@@ -134,34 +135,36 @@ class _HomeScreenState extends State<HomeScreen> {
               child: DefaultTabController(
                 initialIndex: 0,
                 length: 2,
-                child: Scaffold(
-                  appBar: AppBar(
-                    bottom: const TabBar(
+                child: Column(
+                  children: [
+                    const TabBar(
                       tabs: <Widget>[
                         Tab(icon: Text("Tasks TODO")),
                         Tab(icon: Text("All tasks")),
                       ],
                     ),
-                  ),
-                  body: TabBarView(
-                    children: <Widget>[
-                      TaskColumn(
-                        tasks:
-                            _taskList
-                                .where((task) => !task.isCompleted)
-                                .toList(),
-                        onDelete: _onTaskDelete,
-                        onUpdate: _onTaskUpdate,
-                        loading: false,
+                    Expanded(
+                      child: TabBarView(
+                        children: <Widget>[
+                          TaskColumn(
+                            tasks:
+                                _tasks
+                                    .where((task) => !task.isCompleted)
+                                    .toList(),
+                            onDelete: _onTaskDelete,
+                            onUpdate: _onTaskUpdate,
+                            loading: false,
+                          ),
+                          TaskColumn(
+                            tasks: _tasks,
+                            onUpdate: _onTaskUpdate,
+                            onDelete: _onTaskDelete,
+                            loading: false,
+                          ),
+                        ],
                       ),
-                      TaskColumn(
-                        tasks: _taskList,
-                        onUpdate: _onTaskUpdate,
-                        onDelete: _onTaskDelete,
-                        loading: false,
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             );

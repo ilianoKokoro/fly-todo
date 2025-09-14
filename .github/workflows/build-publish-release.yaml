@@ -3,7 +3,7 @@ on:
         branches:
             - main
         paths:
-            - "flutter-client/**"
+            - "/**"
             - ".github/workflows/**"
     workflow_dispatch:
 
@@ -12,7 +12,6 @@ concurrency:
     cancel-in-progress: true
 
 env:
-    SUB_DIR: flutter-client
     ANDROID_TARGET_BINARY_NAME: android-fly-todo-release
     WINDOWS_TARGET_BUNDLE_NAME: windows-fly-todo-release
     ANDROID_APK_PATH: ./build/app/outputs/flutter-apk/app-release.apk
@@ -51,28 +50,25 @@ jobs:
 
             - name: Create keystore.properties file
               run: |
-                  echo "storeFile=${{env.STORE_FILE_PATH}}" > $GITHUB_WORKSPACE/${{env.SUB_DIR}}/android/keystore.properties
-                  echo "storePassword=${{ secrets.KEY_STORE_PASSWORD }}" >> $GITHUB_WORKSPACE/${{env.SUB_DIR}}/android/keystore.properties
-                  echo "keyAlias=${{ secrets.ALIAS }}" >> $GITHUB_WORKSPACE/${{env.SUB_DIR}}/android/keystore.properties
-                  echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> $GITHUB_WORKSPACE/${{env.SUB_DIR}}/android/keystore.properties
+                  echo "storeFile=${{env.STORE_FILE_PATH}}" > $GITHUB_WORKSPACE/android/keystore.properties
+                  echo "storePassword=${{ secrets.KEY_STORE_PASSWORD }}" >> $GITHUB_WORKSPACE/android/keystore.properties
+                  echo "keyAlias=${{ secrets.ALIAS }}" >> $GITHUB_WORKSPACE/android/keystore.properties
+                  echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> $GITHUB_WORKSPACE/android/keystore.properties
 
             - name: Get the packages
-              working-directory: ${{env.SUB_DIR}}
               run: flutter pub get
 
             - name: Build APK
-              working-directory: ${{env.SUB_DIR}}
               run: flutter build apk --release
 
             - name: Rename APK
-              working-directory: ${{env.SUB_DIR}}
               run: mv ${{env.ANDROID_APK_PATH}} ./${{env.ANDROID_TARGET_BINARY_NAME}}.apk
 
             - name: Upload APK
               uses: actions/upload-artifact@v4
               with:
                   name: ${{env.ANDROID_TARGET_BINARY_NAME}}
-                  path: ./${{env.SUB_DIR}}/${{env.ANDROID_TARGET_BINARY_NAME}}.apk
+                  path: ./${{env.ANDROID_TARGET_BINARY_NAME}}.apk
                   if-no-files-found: error
     build-windows-binary:
         runs-on: windows-latest
@@ -88,15 +84,13 @@ jobs:
             - run: flutter --version
 
             - name: Generate MSIX
-              working-directory: ${{env.SUB_DIR}}
               run: dart run msix:create --install-certificate false
             - name: Rename APK
-              working-directory: ${{env.SUB_DIR}}
               run: mv ${{env.WINDOWS_BINARY_LOCATION}} ./${{env.WINDOWS_TARGET_BUNDLE_NAME}}.msix
 
             - name: Upload binary
               uses: actions/upload-artifact@v4
               with:
                   name: ${{env.WINDOWS_TARGET_BUNDLE_NAME}}
-                  path: ./${{env.SUB_DIR}}/${{env.WINDOWS_TARGET_BUNDLE_NAME}}.msix
+                  path: ./${{env.WINDOWS_TARGET_BUNDLE_NAME}}.msix
                   if-no-files-found: error

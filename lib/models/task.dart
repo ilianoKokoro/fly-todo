@@ -1,40 +1,48 @@
-import 'dart:convert';
-
-import 'package:fly_todo/repositories/task_repository.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Task {
-  static final TaskRepository _taskRepository = TaskRepository();
-  static Future<Task> create() async {
-    return await _taskRepository.createTask();
+  static Future<void> create() async {
+    await FirebaseFirestore.instance.collection("tasks").add({
+      "name": "",
+      "isCompleted": "false",
+      "creator": FirebaseAuth.instance.currentUser!.uid,
+    });
   }
 
+  static List<Task> listFromDocuments(
+    Iterable<QueryDocumentSnapshot<Map<String, dynamic>>> tasksDocuments,
+  ) {
+    final List<Task> tasks = [];
+    for (var taskDocument in tasksDocuments) {
+      tasks.add(
+        Task(
+          taskDocument.id,
+          taskDocument["name"],
+          taskDocument["isCompleted"] == "true",
+          taskDocument["creator"],
+        ),
+      );
+    }
+
+    return tasks;
+  }
+
+  String id;
   String name;
   bool isCompleted;
-  String href;
+  String creator;
 
-  Task(this.name, this.isCompleted, this.href);
-
-  Task.fromJson(Map<String, dynamic> json)
-    : name = json['name'] as String,
-      isCompleted = json['isCompleted'] as bool,
-      href = json['href'] as String;
-
-  @override
-  String toString() {
-    return toJsonString();
-  }
-
-  String toJsonString() => jsonEncode({
-    'name': name,
-    'isCompleted': isCompleted.toString(),
-    "href": href,
-  });
+  Task(this.id, this.name, this.isCompleted, this.creator);
 
   Future<void> update() async {
-    await _taskRepository.updateTask(this);
+    await FirebaseFirestore.instance.collection("tasks").doc(id).update({
+      "name": name,
+      "isCompleted": isCompleted.toString(),
+    });
   }
 
   Future<void> delete() async {
-    return await _taskRepository.deleteTask(this);
+    await FirebaseFirestore.instance.collection("task").doc(id).delete();
   }
 }

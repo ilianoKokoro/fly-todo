@@ -23,9 +23,10 @@ class _TaskRowState extends State<TaskRow> with AutomaticKeepAliveClientMixin {
 
   void _updateTask({String? name, bool? isCompleted}) {
     final updatedTask = Task(
+      widget.task.id,
       name ?? widget.task.name,
       isCompleted ?? widget.task.isCompleted,
-      widget.task.href,
+      widget.task.creator,
     );
 
     widget.onUpdate(updatedTask);

@@ -42,7 +42,7 @@ class _TaskColumnState extends State<TaskColumn> {
       // Add new tasks
       for (int i = 0; i < newTasks.length; i++) {
         final task = newTasks[i];
-        if (i >= oldTasks.length || oldTasks[i].href != task.href) {
+        if (i >= oldTasks.length || oldTasks[i].id != task.id) {
           _tasks.insert(i, task);
           _listKey.currentState?.insertItem(i);
         }
@@ -51,7 +51,7 @@ class _TaskColumnState extends State<TaskColumn> {
       // Remove tasks
       for (int i = oldTasks.length - 1; i >= 0; i--) {
         final task = oldTasks[i];
-        if (!newTasks.any((newTask) => newTask.href == task.href)) {
+        if (!newTasks.any((newTask) => newTask.id == task.id)) {
           _tasks.removeAt(i);
           _listKey.currentState?.removeItem(
             i,
@@ -73,7 +73,7 @@ class _TaskColumnState extends State<TaskColumn> {
     return SizeTransition(
       sizeFactor: animation,
       child: TaskRow(
-        key: ValueKey(task.href),
+        key: ValueKey(task.id),
         task: task,
         onUpdate: widget.onUpdate,
         onDelete: widget.onDelete,

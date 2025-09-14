@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  cloud_firestore
   dynamic_system_colors
   firebase_auth
   firebase_core

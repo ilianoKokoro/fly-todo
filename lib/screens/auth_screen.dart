@@ -140,35 +140,51 @@ class _AuthScreenState extends State<AuthScreen> {
                           ),
                 ),
               ),
-
-              BottomButtonRow(
-                leftButtonText: 'Log In',
-                leftButtonAction: () {
-                  if (_currentScreen == AuthType.logIn) {
-                    _executeAuthentication();
-                  } else {
-                    setState(() {
-                      _currentScreen = AuthType.logIn;
-                    });
-                  }
-                },
-                rightButtonText: 'Sign Up',
-                rightButtonAction: () {
-                  if (_currentScreen == AuthType.signUp) {
-                    _executeAuthentication();
-                  } else {
-                    setState(() {
-                      _currentScreen = AuthType.signUp;
-                    });
-                  }
-                },
-                rightButtonEnabled:
-                    (_currentScreen == AuthType.logIn && !_loading) ||
-                    (_password != "" && _email != ""),
-                leftButtonEnabled:
-                    (_currentScreen == AuthType.signUp && !_loading) ||
-                    (_email != "" && _password != ""),
-                mainButtonIsLeft: _currentScreen == AuthType.logIn,
+              Column(
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      FirebaseAuth.instance.signInWithProvider(
+                        GoogleAuthProvider(),
+                      );
+                    },
+                    icon: ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: 40),
+                      child: Image.network(
+                        "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png",
+                      ),
+                    ),
+                  ),
+                  BottomButtonRow(
+                    leftButtonText: 'Log In',
+                    leftButtonAction: () {
+                      if (_currentScreen == AuthType.logIn) {
+                        _executeAuthentication();
+                      } else {
+                        setState(() {
+                          _currentScreen = AuthType.logIn;
+                        });
+                      }
+                    },
+                    rightButtonText: 'Sign Up',
+                    rightButtonAction: () {
+                      if (_currentScreen == AuthType.signUp) {
+                        _executeAuthentication();
+                      } else {
+                        setState(() {
+                          _currentScreen = AuthType.signUp;
+                        });
+                      }
+                    },
+                    rightButtonEnabled:
+                        (_currentScreen == AuthType.logIn && !_loading) ||
+                        (_password != "" && _email != ""),
+                    leftButtonEnabled:
+                        (_currentScreen == AuthType.signUp && !_loading) ||
+                        (_email != "" && _password != ""),
+                    mainButtonIsLeft: _currentScreen == AuthType.logIn,
+                  ),
+                ],
               ),
             ],
           ),

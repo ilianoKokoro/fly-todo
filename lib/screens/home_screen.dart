@@ -111,6 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
           stream:
               FirebaseFirestore.instance
                   .collection(Collections.tasks)
+                  .orderBy("createdAt")
                   .where(
                     "creator",
                     isEqualTo: FirebaseAuth.instance.currentUser!.uid,
@@ -123,10 +124,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
             try {
               if (!snapshot.hasData) {
-                throw Exception();
+                return const Center(child: CircularProgressIndicator());
               }
+
+              debugPrint("Tasks were got from Firestore");
               _tasks = Task.listFromDocuments(snapshot.data!.docs);
             } catch (e) {
+              debugPrint(e.toString());
               return const Text("No tasks");
             }
 

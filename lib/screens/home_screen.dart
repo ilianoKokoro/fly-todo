@@ -1,0 +1,180 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:fly_todo/components/task_column.dart';
+import 'package:fly_todo/core/modal.dart';
+import 'package:fly_todo/core/constants.dart';
+import 'package:fly_todo/models/task.dart';
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  Task? _lastUpdatedTask;
+  Timer? _updateDebounce;
+  List<Task> _tasks = [];
+
+  @override
+  void dispose() {
+    _updateDebounce?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _logOut() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+    } on Exception catch (err) {
+      if (mounted) {
+        Modal.showError(err, context);
+      }
+    }
+  }
+
+  Future<void> _createTask() async {
+    try {
+      await Task.create();
+    } on Exception catch (err) {
+      if (mounted) {
+        Modal.showError(err, context);
+      }
+    }
+  }
+
+  Future<void> _onTaskUpdate(Task updatedTask) async {
+    try {
+      // If the completed state change, just sent an update automatically
+      if (updatedTask.id == _lastUpdatedTask?.id &&
+          updatedTask.isCompleted != _lastUpdatedTask?.isCompleted) {
+        _updateDebounce?.cancel();
+        await updatedTask.update();
+        _lastUpdatedTask = updatedTask;
+        return;
+      }
+
+      if (_updateDebounce?.isActive ?? false) {
+        if (updatedTask.id != _lastUpdatedTask?.id) {
+          _lastUpdatedTask?.update();
+        }
+        _updateDebounce?.cancel();
+      }
+
+      _updateDebounce = Timer(
+        const Duration(milliseconds: App.debounceMs),
+        () async {
+          await updatedTask.update();
+        },
+      );
+      _lastUpdatedTask = updatedTask;
+    } on Exception catch (err) {
+      if (mounted) {
+        Modal.showError(err, context);
+      }
+    }
+  }
+
+  Future<void> _onTaskDelete(Task taskToDelete) async {
+    try {
+      await taskToDelete.delete();
+    } on Exception catch (err) {
+      if (mounted) {
+        Modal.showError(err, context);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.logout),
+          onPressed: () {
+            _logOut();
+          },
+        ),
+        centerTitle: true,
+        title: const Text(App.title),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async => {_createTask()},
+        enableFeedback: true,
+        child: const Icon(Icons.add),
+      ),
+      body: Center(
+        child: StreamBuilder(
+          stream:
+              FirebaseFirestore.instance
+                  .collection(Collections.tasks)
+                  .orderBy("createdAt")
+                  .where(
+                    "creator",
+                    isEqualTo: FirebaseAuth.instance.currentUser!.uid,
+                  )
+                  .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            }
+
+            try {
+              if (!snapshot.hasData) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              debugPrint("Tasks were got from Firestore");
+              _tasks = Task.listFromDocuments(snapshot.data!.docs);
+            } catch (e) {
+              debugPrint(e.toString());
+              return const Text("No tasks");
+            }
+
+            return ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 800),
+              child: DefaultTabController(
+                initialIndex: 0,
+                length: 2,
+                child: Column(
+                  children: [
+                    const TabBar(
+                      tabs: <Widget>[
+                        Tab(icon: Text("Tasks TODO")),
+                        Tab(icon: Text("All tasks")),
+                      ],
+                    ),
+                    Expanded(
+                      child: TabBarView(
+                        children: <Widget>[
+                          TaskColumn(
+                            tasks:
+                                _tasks
+                                    .where((task) => !task.isCompleted)
+                                    .toList(),
+                            onDelete: _onTaskDelete,
+                            onUpdate: _onTaskUpdate,
+                            loading: false,
+                          ),
+                          TaskColumn(
+                            tasks: _tasks,
+                            onUpdate: _onTaskUpdate,
+                            onDelete: _onTaskDelete,
+                            loading: false,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}

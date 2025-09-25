@@ -1,4 +1,9 @@
+[![Latest release](https://img.shields.io/github/v/release/ilianoKokoro/fly-todo?include_prereleases&style=for-the-badge)](https://github.com/ilianoKokoro/fly-todo/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/ilianoKokoro/fly-todo/total?style=for-the-badge&color=E53935)](https://github.com/ilianoKokoro/fly-todo/releases/latest)
+
 # Fly TODO
+
+<img src="https://raw.githubusercontent.com/ilianoKokoro/fly-todo/refs/heads/main/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" height="72">
 
 Stay organized, effortlessly.
 
@@ -20,19 +25,27 @@ Features:
 
 If you're looking for a lightweight task manager that just works, this is the app for you.
 
+## Screenshots
+
+<p float="left">
+  <img src="https://raw.githubusercontent.com/ilianoKokoro/fly-todo/refs/heads/main/assets/home.png" width="200" />
+</p>
+
 ## Availability
 
-### Windows
-
-The app is available on Windows by the [Microsoft store](https://apps.microsoft.com/detail/9N6TLNJ99NBP)
+<!-- The app is available on Windows by the [Microsoft store](https://apps.microsoft.com/detail/9N6TLNJ99NBP) -->
 
 ### Web
 
-The app is available on all devices at [fly-todo.vercel.app](https://fly-todo.vercel.app/)
+The app is available on all devices at
+
+#### [fly-todo.vercel.app](https://fly-todo.vercel.app/)
 
 ### Android
 
-The app is only available by the APK that can be downloaded on the latest [release page](https://github.com/ilianoKokoro/fly-todo/releases/latest)
+The app is only available by the APK that can be downloaded on the latest release page :
+
+<a href="https://github.com/ilianoKokoro/fly-todo/releases/latest"><img src="https://i.postimg.cc/sxWv2J29/badge-github.png" height="80"></a>
 
 <p>
 You can also get the Beta build from this link :
@@ -40,9 +53,13 @@ You can also get the Beta build from this link :
 
 **⚠️ This build may not be stable as it is not a release ⚠️**
 
-[![Download APK](https://github.com/IlianoKokoro/fly-todo/actions/workflows/build-publish-release.yaml/badge.svg?branch=main)](https://nightly.link/ilianoKokoro/fly-todo/workflows/build-publish-release.yaml/main/android-fly-todo-release.zip)
+[![Beta APK Build](https://img.shields.io/github/actions/workflow/status/ilianoKokoro/fly-todo/build-publish-release.yaml?style=for-the-badge&label=Beta%20Build)](https://github.com/ilianoKokoro/fly-todo/actions/workflows/build-publish-release.yaml)
 
 <a href="https://nightly.link/ilianoKokoro/fly-todo/workflows/build-publish-release.yaml/main/android-fly-todo-release.zip"><img src="https://i.postimg.cc/sxWv2J29/badge-github.png" height="80"></a>
+
+### Windows
+
+Coming soon ...
 
 ### Linux
 
@@ -52,36 +69,21 @@ Coming soon ...
 
 ### Requirements
 
-#### Flutter client
-
 -   [Flutter SDK](https://docs.flutter.dev/get-started/install)
 -   A device to test the app on (Web, Android or Windows)
-
-#### Node server
-
--   Node (LTS)
--   NPM
 
 ### Commands
 
 #### Flutter client
 
+Setup Firebase :
+
+```
+flutterfire configure --project=fly-todo
+```
+
 Starting the Flutter client in dev mode :
 
 ```
 flutter run
-```
-
-#### Node server
-
-Setting up the dependencies :
-
-```
-npm i
-```
-
-Starting the node server in dev mode :
-
-```
-npm run dev
 ```

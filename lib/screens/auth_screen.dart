@@ -4,6 +4,7 @@ import 'package:fly_todo/components/button_row.dart';
 import 'package:fly_todo/components/text_input_with_padding.dart';
 import 'package:fly_todo/core/constants.dart';
 import 'package:fly_todo/core/modal.dart';
+import 'package:fly_todo/repositories/auth_repository.dart';
 
 enum AuthType { logIn, signUp }
 
@@ -29,24 +30,14 @@ class _AuthScreenState extends State<AuthScreen> {
       setState(() {
         _loading = true;
       });
-      UserCredential userCredentials;
       if (_currentScreen == AuthType.logIn) {
-        userCredentials = await FirebaseAuth.instance
-            .signInWithEmailAndPassword(
-              email: _email.trim(),
-              password: _password.trim(),
-            );
+        await AuthRepository.signInWithEmail(_email.trim(), _password.trim());
       } else {
         if (_password != _passwordConfirm) {
           throw Exception("The passwords do not match");
         }
-        userCredentials = await FirebaseAuth.instance
-            .createUserWithEmailAndPassword(
-              email: _email.trim(),
-              password: _password.trim(),
-            );
+        await AuthRepository.signUpWithEmail(_email.trim(), _password.trim());
       }
-      debugPrint(userCredentials.toString());
     } on FirebaseAuthException catch (err) {
       if (mounted) {
         Modal.showInfo(
@@ -142,20 +133,17 @@ class _AuthScreenState extends State<AuthScreen> {
                       ),
                       Column(
                         children: [
-                          // TODO : When I have time
-                          // IconButton(
-                          //   onPressed: () {
-                          //     FirebaseAuth.instance.signInWithProvider(
-                          //       GoogleAuthProvider(),
-                          //     );
-                          //   },
-                          //   icon: ConstrainedBox(
-                          //     constraints: BoxConstraints(maxWidth: 40),
-                          //     child: Image.network(
-                          //       "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png",
-                          //     ),
-                          //   ),
-                          // ),
+                          IconButton(
+                            onPressed: () {
+                              AuthRepository.signInWithGoogle();
+                            },
+                            icon: ConstrainedBox(
+                              constraints: BoxConstraints(maxWidth: 40),
+                              child: Image(
+                                image: AssetImage('assets/google.png'),
+                              ),
+                            ),
+                          ),
                           BottomButtonRow(
                             leftButtonText: 'Log In',
                             leftButtonAction: () {

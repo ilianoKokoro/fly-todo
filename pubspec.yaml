@@ -4,36 +4,39 @@ publish_to: "none"
 version: 2.0.1
 
 environment:
-    sdk: ^3.7.2
+  sdk: ^3.7.2
 
 dependencies:
-    build_runner: ^2.8.0
-    dynamic_system_colors: ^1.8.0
-    flutter:
-        sdk: flutter
-    http: ^1.5.0
-    shared_preferences: ^2.5.3
-    firebase_auth: ^6.1.0
-    firebase_core: ^4.1.1
-    cloud_firestore: ^6.0.2
+  build_runner: ^2.8.0
+  dynamic_system_colors: ^1.8.0
+  flutter:
+    sdk: flutter
+  http: ^1.5.0
+  shared_preferences: ^2.5.3
+  firebase_auth: ^6.1.0
+  firebase_core: ^4.1.1
+  cloud_firestore: ^6.0.2
+  google_sign_in: ^7.2.0
 
 dev_dependencies:
-    flutter_test:
-        sdk: flutter
-    flutter_lints: ^6.0.0
-    msix: ^3.16.12
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  msix: ^3.16.12
 
 msix_config:
-    display_name: Fly TODO
-    publisher_display_name: ilianoKokoro
-    identity_name: ilianoKokoro.FlyTODO
-    family_name: ilianoKokoro.FlyTODO_e59jqyr24yf08
-    msix_version: 2.0.1.0
-    logo_path: web/icons/web-app-manifest-512x512.png
-    capabilities: internetClient
-    architecture: x64
-    publisher: CN=FBE2EC37-2851-4624-9F60-D21F9C6C6665
-    store: true
+  display_name: Fly TODO
+  publisher_display_name: ilianoKokoro
+  identity_name: ilianoKokoro.FlyTODO
+  family_name: ilianoKokoro.FlyTODO_e59jqyr24yf08
+  msix_version: 2.0.1.0
+  logo_path: web/icons/web-app-manifest-512x512.png
+  capabilities: internetClient
+  architecture: x64
+  publisher: CN=FBE2EC37-2851-4624-9F60-D21F9C6C6665
+  store: true
 
 flutter:
-    uses-material-design: true
+  uses-material-design: true
+  assets:
+    - assets/google.png

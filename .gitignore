@@ -46,7 +46,3 @@ app.*.map.json
 /android/.kotlin/sessions/
 # Signing
 /android/keystore.properties
-
-# Firebase
-/android/app/google-services.json
-/lib/firebase_options.dart

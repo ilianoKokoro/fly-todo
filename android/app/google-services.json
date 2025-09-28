@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "252245842703",
+    "project_id": "fly-todo",
+    "storage_bucket": "fly-todo.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:252245842703:android:779c0e7cb0ffbf8852fc7a",
+        "android_client_info": {
+          "package_name": "com.ilianokokoro.fly_todo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "252245842703-qbmknbottesqerllleo3nkqrd2mlecos.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAO_I2t82c8tMbHsU5cWMW1ChR1r1alLnk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "252245842703-luq1u8d0gmeus3qvg3bj6erg88koaohe.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

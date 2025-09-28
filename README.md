@@ -76,11 +76,6 @@ Coming soon ...
 
 #### Flutter client
 
-Setup Firebase :
-
-```
-flutterfire configure --project=fly-todo
-```
 
 Starting the Flutter client in dev mode :
 

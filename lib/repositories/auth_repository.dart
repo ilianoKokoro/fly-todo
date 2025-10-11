@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -18,7 +19,11 @@ class AuthRepository {
   }
 
   static Future<void> signInWithGoogle() async {
-    await GoogleSignIn.instance.authenticate();
+    if (kIsWeb) {
+      await FirebaseAuth.instance.signInWithPopup(GoogleAuthProvider());
+    } else {
+      await GoogleSignIn.instance.authenticate();
+    }
   }
 
   static Future<void> signInWithEmail(

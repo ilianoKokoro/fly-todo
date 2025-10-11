@@ -5,15 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthRepository {
-  static void init() {
-    final GoogleSignIn signIn = GoogleSignIn.instance;
-    unawaited(
-      signIn.initialize().then((_) {
-        signIn.authenticationEvents
-            .listen(_handleAuthenticationEvent)
-            .onError(_handleAuthenticationError);
+  static final GoogleSignIn googleAuthInstance = GoogleSignIn.instance;
 
-        signIn.attemptLightweightAuthentication();
+  static void init() {
+    unawaited(
+      googleAuthInstance.initialize().then((_) {
+        googleAuthInstance.authenticationEvents
+            .listen(_handleGoogleAuthenticationEvent)
+            .onError(_handleGoogleAuthenticationError);
       }),
     );
   }
@@ -46,7 +45,7 @@ class AuthRepository {
     await FirebaseAuth.instance.signOut();
   }
 
-  static void _handleAuthenticationEvent(dynamic event) async {
+  static void _handleGoogleAuthenticationEvent(dynamic event) async {
     if (event is GoogleSignInAuthenticationEventSignIn) {
       await FirebaseAuth.instance.signInWithCredential(
         GoogleAuthProvider.credential(
@@ -58,7 +57,7 @@ class AuthRepository {
     }
   }
 
-  static void _handleAuthenticationError(dynamic error) {
+  static void _handleGoogleAuthenticationError(dynamic error) {
     // Silent fail for now
     debugPrint('Authentication error: $error');
   }

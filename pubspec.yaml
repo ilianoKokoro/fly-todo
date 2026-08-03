@@ -4,7 +4,7 @@ publish_to: "none"
 version: 2.1.2
 
 environment:
-    sdk: ^3.11.4
+    sdk: ^3.44.8
 
 dependencies:
     build_runner: ^2.16.0
@@ -13,23 +13,23 @@ dependencies:
         sdk: flutter
     http: ^1.6.0
     shared_preferences: ^2.5.5
-    firebase_auth: ^6.5.6
-    firebase_core: ^4.12.1
-    cloud_firestore: ^6.7.1
+    firebase_auth: ^6.4.0
+    firebase_core: ^4.7.0
+    cloud_firestore: ^6.3.0
     google_sign_in: ^7.2.0
 
 dev_dependencies:
     flutter_test:
         sdk: flutter
     flutter_lints: ^6.0.0
-    msix: ^3.18.0
+    msix: ^3.16.13
 
 msix_config:
     display_name: Fly TODO
     publisher_display_name: ilianoKokoro
     identity_name: ilianoKokoro.FlyTODO
     family_name: ilianoKokoro.FlyTODO_e59jqyr24yf08
-    msix_version: 2.1.1.0
+    msix_version: 2.1.2.0
     logo_path: web/icons/web-app-manifest-512x512.png
     capabilities: internetClient
     architecture: x64

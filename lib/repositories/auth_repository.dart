@@ -26,8 +26,8 @@ class AuthRepository {
   }
 
   static Future<void> signInWithEmail(
-    final String email,
-    final String password,
+    String email,
+    String password,
   ) async {
     await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: email,
@@ -36,8 +36,8 @@ class AuthRepository {
   }
 
   static Future<void> signUpWithEmail(
-    final String email,
-    final String password,
+    String email,
+    String password,
   ) async {
     await FirebaseAuth.instance.createUserWithEmailAndPassword(
       email: email,

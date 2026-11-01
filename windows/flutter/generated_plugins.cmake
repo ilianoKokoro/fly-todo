@@ -4,7 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   cloud_firestore
-  dynamic_system_colors
+  dynamic_color
   firebase_auth
   firebase_core
 )

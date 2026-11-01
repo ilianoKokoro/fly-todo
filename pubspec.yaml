@@ -7,16 +7,14 @@ environment:
     sdk: ^3.12.2
 
 dependencies:
-    build_runner: ^2.17.1
-    dynamic_system_colors: ^1.9.0
+    dynamic_color: ^2.1.0
     flutter:
         sdk: flutter
-    http: ^1.6.0
-    shared_preferences: ^2.5.6
-    firebase_auth: ^7.0.0
-    firebase_core: ^5.0.0
-    cloud_firestore: ^7.0.0
+    firebase_auth: ^7.0.1
+    firebase_core: ^5.1.0
+    cloud_firestore: ^7.1.0
     google_sign_in: ^7.2.0
+    material_ui: ^1.9.0
 
 dev_dependencies:
     flutter_test:
@@ -30,7 +28,7 @@ msix_config:
     publisher_display_name: ilianoKokoro
     identity_name: ilianoKokoro.FlyTODO
     family_name: ilianoKokoro.FlyTODO_e59jqyr24yf08
-    msix_version: 2.1.2.0
+    msix_version: 3.0.0.0
     logo_path: web/icons/web-app-manifest-512x512.png
     capabilities: internetClient
     architecture: x64

@@ -11,7 +11,7 @@ This simple and intuitive to-do app helps you stay on top of your tasks — no c
 
 Create tasks, give them names, and mark them as completed — it's that easy. Whether you're planning your day or tackling long-term goals, this app helps you stay focused and productive.
 
-Sign up with your username, email, and password to sync your tasks across devices. Your account keeps your to-do list safe and accessible whether you're on your phone, tablet, or another device.
+Sign up with your email and password to sync your tasks across devices. Your account keeps your to-do list safe and accessible whether you're on your phone, tablet, or another device.
 
 And best of all, it’s completely free.
 
@@ -20,7 +20,7 @@ Features:
 -   Clean and modern interface powered by Flutter and Google Material UI
 -   Quickly add, name, and complete tasks
 -   Secure task syncing across all your devices
--   Easy account setup with username, email, and password
+-   Easy account setup with email and password
 -   100% free and open source, with no ads or subscriptions
 
 If you're looking for a lightweight task manager that just works, this is the app for you.

@@ -1,6 +1,6 @@
-import 'package:dynamic_system_colors/dynamic_system_colors.dart';
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:fly_todo/core/constants.dart';
 import 'package:fly_todo/firebase_options.dart';
 import 'package:fly_todo/repositories/auth_repository.dart';

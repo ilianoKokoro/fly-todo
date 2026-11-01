@@ -18,19 +18,38 @@ class TaskRow extends StatefulWidget {
 }
 
 class _TaskRowState extends State<TaskRow> with AutomaticKeepAliveClientMixin {
+  late final TextEditingController _controller =
+      TextEditingController(text: widget.task.name);
+  final FocusNode _focus = FocusNode();
+
   @override
   bool get wantKeepAlive => true;
 
-  void _updateTask({String? name, bool? isCompleted}) {
-    final updatedTask = Task(
-      widget.task.id,
-      name ?? widget.task.name,
-      isCompleted ?? widget.task.isCompleted,
-      widget.task.creator,
-      widget.task.createdAt,
-    );
+  @override
+  void didUpdateWidget(TaskRow oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!_focus.hasFocus && widget.task.name != _controller.text) {
+      _controller.text = widget.task.name;
+    }
+  }
 
-    widget.onUpdate(updatedTask);
+  @override
+  void dispose() {
+    _controller.dispose();
+    _focus.dispose();
+    super.dispose();
+  }
+
+  void _updateTask({bool? isCompleted}) {
+    widget.onUpdate(
+      Task(
+        widget.task.id,
+        _controller.text,
+        isCompleted ?? widget.task.isCompleted,
+        widget.task.creator,
+        widget.task.createdAt,
+      ),
+    );
   }
 
   @override
@@ -47,10 +66,10 @@ class _TaskRowState extends State<TaskRow> with AutomaticKeepAliveClientMixin {
           ),
         ),
         Expanded(
-          child: TextFormField(
-            initialValue: widget.task.name,
-            onChanged: (value) => _updateTask(name: value),
-            enabled: true,
+          child: TextField(
+            controller: _controller,
+            focusNode: _focus,
+            onChanged: (_) => _updateTask(),
           ),
         ),
         IconButton(

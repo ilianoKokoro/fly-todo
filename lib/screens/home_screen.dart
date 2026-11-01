@@ -20,6 +20,13 @@ class _HomeScreenState extends State<HomeScreen> {
   Timer? _updateDebounce;
   List<Task> _tasks = [];
 
+  late final Stream<QuerySnapshot<Map<String, dynamic>>> _tasksStream =
+    FirebaseFirestore.instance
+        .collection(Collections.tasks)
+        .orderBy("createdAt")
+        .where("creator", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        .snapshots();
+
   @override
   void dispose() {
     _updateDebounce?.cancel();
@@ -108,15 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Center(
         child: StreamBuilder(
-          stream:
-              FirebaseFirestore.instance
-                  .collection(Collections.tasks)
-                  .orderBy("createdAt")
-                  .where(
-                    "creator",
-                    isEqualTo: FirebaseAuth.instance.currentUser!.uid,
-                  )
-                  .snapshots(),
+          stream: _tasksStream,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const CircularProgressIndicator();
@@ -143,7 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     const TabBar(
                       tabs: <Widget>[
-                        Tab(icon: Text("Tasks TODO")),
+                        Tab(icon: Text("Active tasks")),
                         Tab(icon: Text("All tasks")),
                       ],
                     ),

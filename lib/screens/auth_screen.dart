@@ -22,38 +22,51 @@ class _AuthScreenState extends State<AuthScreen> {
   String _passwordConfirm = "";
   AuthType _currentScreen = AuthType.logIn;
 
-  void _executeAuthentication() async {
+  String _messageFor(String code) {
+    switch (code) {
+      case 'invalid-email':
+        return 'The email address is invalid.';
+      case 'user-disabled':
+        return 'This account has been disabled.';
+      case 'user-not-found':
+      case 'wrong-password':
+      case 'invalid-credential':
+        return 'Incorrect email or password.';
+      case 'email-already-in-use':
+        return 'An account already exists for this email.';
+      case 'weak-password':
+        return 'The password is too weak.';
+      case 'operation-not-allowed':
+        return 'This sign-in method is not enabled.';
+      case 'too-many-requests':
+        return 'Too many attempts. Try again later.';
+      case 'network-request-failed':
+        return 'Network error. Check your connection.';
+      default:
+        return 'Authentication failed ($code).';
+    }
+  }
+
+  Future<void> _executeAuthentication() async {
+    if (_loading) return;
+    setState(() => _loading = true);
     try {
-      if (_loading == true) {
-        return;
-      }
-      setState(() {
-        _loading = true;
-      });
       if (_currentScreen == AuthType.logIn) {
-        await AuthRepository.signInWithEmail(_email.trim(), _password.trim());
+        await AuthRepository.signInWithEmail(_email.trim(), _password);
       } else {
         if (_password != _passwordConfirm) {
           throw Exception("The passwords do not match");
         }
-        await AuthRepository.signUpWithEmail(_email.trim(), _password.trim());
+        await AuthRepository.signUpWithEmail(_email.trim(), _password);
       }
     } on FirebaseAuthException catch (err) {
       if (mounted) {
-        Modal.showInfo(
-          "Authentication Error",
-          err.message ?? "Unknown error",
-          context,
-        );
+        Modal.showInfo("Authentication Error", _messageFor(err.code), context);
       }
     } on Exception catch (err) {
-      if (mounted) {
-        Modal.showError(err, context);
-      }
+      if (mounted) Modal.showError(err, context);
     } finally {
-      setState(() {
-        _loading = false;
-      });
+      if (mounted) setState(() => _loading = false);
     }
   }
 
